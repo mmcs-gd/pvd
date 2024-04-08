@@ -53,13 +53,25 @@ let BulletsDemoScene = new Phaser.Class({
         dog.body.setSize(180, 130);
         dog.body.setOffset(50, 48);
 
-        // add layers in second param which block with bullets
-        BulletsManager.create(this, [worldLayer, aboveLayer, dog], bulletsDepth);
+        this.gameObjects.push(dog);
+
+        // add layers or array of game objects in second param, that mean blocking with bullets
+        BulletsManager.create(this, [worldLayer, aboveLayer, this.gameObjects], bulletsDepth);
 
         // reloading for debug scene
         this.reloadingTime = 0;
 
         this.lastTick = getTime();
+
+        // test bullet reactions with realtime added objects 
+        setTimeout(() => {
+            const newDog = this.add.sprite(600, 200, "dog01");
+            this.physics.add.existing(newDog);
+            newDog.setScale(0.5);
+            newDog.body.setSize(180, 130);
+            newDog.body.setOffset(50, 48);
+            this.gameObjects.push(newDog)
+        }, 3000);
     },
 
     update: function () {
