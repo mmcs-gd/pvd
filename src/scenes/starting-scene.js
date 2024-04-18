@@ -1,6 +1,6 @@
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png'
-import dungeonRoomJson from '../assets/dungeon_room.json'
-import {DogAnimationLoader} from "../src/utils/DogAnimationLoader"
+import tilemapPng from '/src/assets/tileset/Dungeon_Tileset.png'
+import dungeonRoomJson from '/src/assets/dungeon_room.json'
+import {DogAnimationLoader} from "/src/utils/DogAnimationLoader.js"
 
 let StartingScene = new Phaser.Class({
 
@@ -17,7 +17,7 @@ let StartingScene = new Phaser.Class({
 
         //loading sprite-sheets
         // Load dog animations
-        DogAnimationLoader.preload("/assets/sprites/pack/Characters/Dogs", this);
+        DogAnimationLoader.preload("/src/assets/sprites/pack/Characters/Dogs", this);
 
     },
     create: function () {
@@ -25,15 +25,15 @@ let StartingScene = new Phaser.Class({
         this.gameObjects = [];
         const map = this.make.tilemap({key: "map"});
 
+        console.log(map);
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
         // Phaser's cache (i.e. the name you used in preload)
         const tileset = map.addTilesetImage("Dungeon_Tileset", "tiles");
 
-
         // Parameters: layer name (or index) from Tiled, tileset, x, y
-        const belowLayer = map.createStaticLayer("Floor", tileset, 0, 0);
-        const worldLayer = map.createStaticLayer("Walls", tileset, 0, 0);
-        const aboveLayer = map.createStaticLayer("Upper", tileset, 0, 0);
+        const belowLayer = map.createLayer("Floor", tileset, 0, 0);
+        const worldLayer = map.createLayer("Walls", tileset, 0, 0);
+        const aboveLayer = map.createLayer("Upper", tileset, 0, 0);
         this.tileSize = 32;
 
 

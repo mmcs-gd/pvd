@@ -1,5 +1,5 @@
-import {assets} from './AssetImporter'
-import config from '../../assets/animations/dogs.json'
+import {assets} from './AssetImporter.js'
+import config from '/src/assets/animations/dogs.json'
 
 class DogAnimationLoader {
     // frame names loaded as dog_XX_attack_frame_YY without leading zeroes!
