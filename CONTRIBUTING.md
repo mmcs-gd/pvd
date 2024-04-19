@@ -14,6 +14,7 @@ JavaScript:
 class Person {
     /** @type {string} */ name;
     /** @type {number} */ age;
+    /** @type {string} */ #social_security_number; // private
 
     /*
      * Creates a new Person instance.
@@ -23,6 +24,7 @@ class Person {
     constructor(name, age) {
         this.name = name;
         this.age = age;
+        // ...
     }
 
     /*
@@ -38,8 +40,9 @@ class Person {
 TypeScript:
 ``` typescript
 class Person {
-    name: string;
-    age: string;
+    public name: string;
+    age: string; // 'public' may be omitted as it is default
+    private social_security_number: string; // private
 
     /*
      * Creates a new Person instance.
