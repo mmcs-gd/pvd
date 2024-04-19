@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "checkJs": true,
+        "outDir": "docs/",
+        "module": "commonjs",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "types": [
+            "vite/client"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "docs"
+    ]
+}
