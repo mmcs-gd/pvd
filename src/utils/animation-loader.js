@@ -7,23 +7,33 @@ export default class AnimationLoader {
     // config format as in /assets/animations/cyberpunk.json
     // prefix - optional animation name prefix
 
-    constructor(scene, spritesheet, config, prefix = "", frameRate = defaultFrameRate, repeate = defaultRepeat)
+    /**
+     * @param {any} scene
+     * @param {any} spritesheet
+     * @param {any} config
+     */
+    constructor(scene, spritesheet, config, prefix = '', frameRate = defaultFrameRate, repeat = defaultRepeat)
     {
         this.scene = scene;
         this.spritesheet = spritesheet;
         this.config = config;
         this.prefix = prefix;
         this.frameRate = frameRate;
-        this.repeat = repeate;
+        this.repeat = repeat;
     }
     createAnimations() {
         let animationGroups = new Map();
         for (const key of Object.keys(this.config)) {
-          animationGroups.set(key, this.parseAnimationsGroup(this.prefix, key, this.config[key]));
+            animationGroups.set(key, this.parseAnimationsGroup(this.prefix, key, this.config[key]));
         }
         return animationGroups;
     }
 
+    /**
+     * @param {string} prefix
+     * @param {string} groupName
+     * @param {{ [x: string]: any; }} animations
+     */
     parseAnimationsGroup(prefix, groupName, animations) {
         let animationsNames = [];
         for (const key of Object.keys(animations)) {
@@ -35,6 +45,12 @@ export default class AnimationLoader {
         return animationsNames;
     }
     // Can be used to create single animation with modified properties
+    /**
+     * @param {string} name
+     * @param {any} frames
+     * @param {number} frameRate
+     * @param {number} repeat
+     */
     createAnimation(name, frames, frameRate, repeat)
     {
         this.scene.anims.create({
