@@ -25,7 +25,6 @@ let StartingScene = new Phaser.Class({
         this.gameObjects = [];
         const map = this.make.tilemap({key: "map"});
 
-        console.log(map);
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
         // Phaser's cache (i.e. the name you used in preload)
         const tileset = map.addTilesetImage("Dungeon_Tileset", "tiles");
