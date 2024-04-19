@@ -11,6 +11,22 @@ const RAINBOW_COLORS: Array<Phaser.Display.Color> = [
     Phaser.Display.Color.ValueToColor('ee82ee')  // violet
 ];
 
+const CAPTIONS = [
+    "Пес, пес, будешь майонез, пес?",
+    "Вуф-вуф!",
+    "Я не люблю майонез!",
+];
+
+const LOADING_CAPTION_ORIGIN ={
+    x: 80,
+    y: 40,
+}
+
+const CAPTION_STYLE = {
+    font: '20px monospace',
+    fill: '#ffffff'
+};
+
 class PreloaderScene extends Phaser.Scene {
 
     #preloaderImage: Phaser.GameObjects.Image;
@@ -20,7 +36,7 @@ class PreloaderScene extends Phaser.Scene {
 
     #currentBgColorIdx = 0;
     #bgColorLerpValue = 0;
-
+    #captionsSpawned = 0;
     constructor() {
         super('PreloaderScene');
     }
@@ -32,37 +48,12 @@ class PreloaderScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         this.#loadingText = this.make.text({
-            x: 80,
-            y: 40,
+            ...LOADING_CAPTION_ORIGIN,
             text: LOADING_TEXT_BASE,
-            style: {
-                font: '20px monospace',
-                fill: '#ffffff'
-            }
+            style: CAPTION_STYLE
         });
         this.#loadingText.setOrigin(0, 0);
-
-        /*// Optional: Create a progress bar or other indicators
-        const progressBar = this.add.graphics();
-        const progressBox = this.add.graphics();
-        progressBox.fillStyle(0x222222, 0.8);
-        progressBox.fillRect(240, 270, 320, 50);
-
-        this.load.on('progress', function (value) {
-            progressBar.clear();
-            progressBar.fillStyle(0xffffff, 1);
-            progressBar.fillRect(250, 280, 300 * value, 30);
-        });
-
-        this.load.on('fileprogress', function (file) {
-            console.log(file.src);
-        });
-
-        this.load.on('complete', () => {
-            progressBar.destroy();
-            progressBox.destroy();
-            this.loadingText.destroy();
-        });*/
+        this.#loadingText.setDepth(Number.MAX_SAFE_INTEGER);
     }
 
     create() {
@@ -84,6 +75,14 @@ class PreloaderScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        // Time event to start the caption loop
+        this.time.addEvent({
+            delay: 1000, // Start after 1 second
+            callback: this.startCaptionLoop,
+            callbackScope: this,
+            loop: false
+        });
     }
 
     spawnImage() {
@@ -93,7 +92,7 @@ class PreloaderScene extends Phaser.Scene {
         // Create an image at a random position
         const image = this.add.image(x, y, 'logo');
         image.setOrigin(0.5, 0.5); // Set origin to center for proper rotation
-
+        image.setScale(0.7);
         // Set the rotation and destroy timer
         this.tweens.add({
             targets: image,
@@ -105,6 +104,71 @@ class PreloaderScene extends Phaser.Scene {
             }
         });
     }
+    #isCaptionLoopRunning = false;
+    #captionLoop:  Phaser.Time.TimerEvent;
+
+    startCaptionLoop() {
+        if (this.#isCaptionLoopRunning) return;
+        this.#isCaptionLoopRunning = true;
+
+        // Time event to spawn captions in sequence
+        this.#captionLoop = this.time.addEvent({
+            delay: 1000, // Spawn a new caption every second
+            callback: this.spawnNextCaption,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Time event to clear all captions after a delay
+        this.time.addEvent({
+            delay: 4000, // Wait for 10 seconds before clearing
+            callback: this.clearCaptions,
+            callbackScope: this,
+            loop: false
+        });
+    }
+
+    spawnNextCaption() {
+        // Calculate the y position based on the index and the height of each caption
+        const captionY = Number(this.sys.game.config.height) / 3; // Adjust as needed for font size and line spacing
+        const y = captionY * ((this.#captionsSpawned  % 3) + 0.5) % this.sys.game.config.height;
+
+        // Get a random caption from the array
+        const captionText = CAPTIONS[this.#captionsSpawned  % 3 % CAPTIONS.length];
+
+        // Create a text object at a random position
+        const text = this.add.text(LOADING_CAPTION_ORIGIN.x,y, captionText, CAPTION_STYLE);
+        text.setOrigin(0, 0); // Set origin to center for proper rotation
+        text.setDepth(Number.MAX_SAFE_INTEGER);
+
+        // Set the rotation and destroy timer
+        this.tweens.add({
+            targets: text,
+            // angle: 360,  // Complete one full rotation (360 degrees)
+            angle: 0,
+            duration: 2000, // Rotate for 2000 milliseconds (2 seconds)
+            ease: 'Linear', // Linear rotation speed
+        });
+
+        this.#captionsSpawned += 1;
+    }
+
+    clearCaptions() {
+        // Stop the caption loop
+        this.#captionLoop.destroy();
+
+        // Clear all existing captions
+        this.children.each((child) => {
+            if (child instanceof Phaser.GameObjects.Text && child !== this.#loadingText) {
+                child.destroy();
+            }
+        });
+
+        this.#isCaptionLoopRunning = false;
+
+        // Restart the caption loop after a delay
+        this.time.delayedCall(0, this.startCaptionLoop, [], this);
+    }
 
     update(time, delta) {
         // Increase the rotation of the image by a small amount each frame
@@ -112,7 +176,17 @@ class PreloaderScene extends Phaser.Scene {
 
         // update captions
 
-        this.#loadingText.text = `${LOADING_TEXT_BASE}${ '.'.repeat(this.#captionDotsCounter)}`;
+        this.children.each((child) => {
+            if (child instanceof Phaser.GameObjects.Text) {
+                if (child === this.#loadingText) {
+                    child.text = `${LOADING_TEXT_BASE}${ '.'.repeat(this.#captionDotsCounter)}`;
+                } else {
+                    child.text = `${child.text}.`;
+                }
+            }
+        });
+
+        // this.#loadingText.text = `${LOADING_TEXT_BASE}${ '.'.repeat(this.#captionDotsCounter)}`;
 
         // update number of dots every 512 frames
         if ((this.#updateCounter >> 4 << 4 ) === this.#updateCounter) {
