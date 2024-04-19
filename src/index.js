@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser from 'phaser';
 
 import StartingScene from '../scenes/starting-scene';
 
@@ -12,9 +12,10 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 0,
+      gravity: {
+        y: 0,
         debug: true // set to true to view zones
-        }
+      }
     }
   },
 };
