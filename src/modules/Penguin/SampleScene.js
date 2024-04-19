@@ -29,28 +29,37 @@ export class SampleScene extends Phaser.Scene {
     this.target = this.add.circle(0, this.radius, 5, 0xff0000);
 
     this.penguins.push(
-      new Penguin(
-        this,
-        GAME_WIDTH / 2,
-        GAME_HEIGHT / 2,
-        "2c",
-        "2g",
-        this.target
-      ),
-      new Penguin(this, 100, 100, "1c", "1g", this.target),
-      new Penguin(this, GAME_WIDTH - 100, 100, "3c", "3g", this.target),
-      new Penguin(this, 100, GAME_HEIGHT - 100, "4c", "4g", this.target),
-      new Penguin(
-        this,
-        GAME_WIDTH - 100,
-        GAME_HEIGHT - 100,
-        "5c",
-        "5g",
-        this.target
-      )
+      new Penguin(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, {
+        bodyKey: "2c",
+        gunKey: "2g",
+        target: this.target,
+        faceToTarget: true,
+      }),
+      new Penguin(this, 100, 100, {
+        bodyKey: "1c",
+        gunKey: "1g",
+        target: this.target,
+        faceToTarget: true,
+      }),
+      new Penguin(this, GAME_WIDTH - 100, 100, {
+        bodyKey: "3c",
+        gunKey: "3g",
+        target: this.target,
+        faceToTarget: true,
+      }),
+      new Penguin(this, 100, GAME_HEIGHT - 100, {
+        bodyKey: "4c",
+        gunKey: "4g",
+        target: this.target,
+        faceToTarget: true,
+      }),
+      new Penguin(this, GAME_WIDTH - 100, GAME_HEIGHT - 100, {
+        bodyKey: "5c",
+        gunKey: "5g",
+        target: this.target,
+        faceToTarget: true,
+      })
     );
-
-    this.penguins.forEach((penguin) => penguin.setFaceToTarget(true));
   }
 
   /**

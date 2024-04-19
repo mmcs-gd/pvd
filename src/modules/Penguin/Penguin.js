@@ -45,17 +45,29 @@ export class Penguin extends Phaser.GameObjects.Container {
    * @param {Phaser.Scene} scene
    * @param {number} x
    * @param {number} y
-   * @param {string} bodyKey
-   * @param {string} gunKey
-   * @param {Target} [target]
+   * @param {Object} options
+   * @param {string} options.bodyKey
+   * @param {string} options.gunKey
+   * @param {Target} [options.target]
+   * @param {boolean} [options.faceToTarget=false]
    */
-  constructor(scene, x, y, bodyKey, gunKey, target) {
+  constructor(scene, x, y, { bodyKey, gunKey, target, faceToTarget }) {
     super(scene, x, y);
 
-    if (!bodiesMap[bodyKey]) throw new Error(`Body key ${bodyKey} not found`);
-    if (!gunsMap[gunKey]) throw new Error(`Gun key ${gunKey} not found`);
+    if (!bodyKey || !bodiesMap[bodyKey]) {
+      throw new Error(
+        bodyKey ? `Body key ${bodyKey} not found` : "Body key is required"
+      );
+    }
+
+    if (!gunKey || !gunsMap[gunKey]) {
+      throw new Error(
+        gunKey ? `Gun key ${gunKey} not found` : "Gun key is required"
+      );
+    }
 
     this.#target = target;
+    this.#faceToTarget = !!faceToTarget;
 
     this.#penguinBody = scene.add.image(0, 0, bodyKey);
 
