@@ -31,6 +31,7 @@ let StartingScene = new Phaser.Class({
         const tileset = map.addTilesetImage("Dungeon_Tileset", "tiles");
 
         // Parameters: layer name (or index) from Tiled, tileset, x, y
+        // createStaticLayer is deprecated!
         const belowLayer = map.createLayer("Floor", tileset, 0, 0);
         const worldLayer = map.createLayer("Walls", tileset, 0, 0);
         const aboveLayer = map.createLayer("Upper", tileset, 0, 0);
