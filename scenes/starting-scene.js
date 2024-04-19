@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
 import dungeonRoomJson from '../assets/dungeon_room.json';
-import { DogAnimationLoader } from '../src/utils/DogAnimationLoader';
+import { DogAnimationLoader } from '../src/utils/DogAnimationLoader.js';
 
 export default class StartingScene extends Phaser.Scene {
     /** @type {object[]} */ gameObjects;
@@ -18,7 +18,7 @@ export default class StartingScene extends Phaser.Scene {
 
         // loading sprite-sheets
         // Load dog animations
-        DogAnimationLoader.preload('/assets/sprites/pack/Characters/Dogs', this);
+        DogAnimationLoader.preload('sprites/pack/Characters/Dogs', this);
 
     }
 

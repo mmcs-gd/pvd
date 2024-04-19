@@ -1,12 +1,12 @@
-import Steering from "./steering.js";
-import Vector2 from 'phaser/src/math/Vector2'
+import Steering from './steering.js';
+import Vector2 from 'phaser/src/math/Vector2.js';
 
 class Pursuit extends Steering {
 
     constructor (owner, objects, force = 1, ownerSpeed, targetSpeed) {
         super(owner, objects, force);
         this.ownerSpeed = ownerSpeed;
-        this.targetSpeed = targetSpeed
+        this.targetSpeed = targetSpeed;
     }
 
     calculateImpulse () {
