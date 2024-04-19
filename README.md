@@ -1,4 +1,5 @@
 # Development
+### Check out [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ```
 npm install
