@@ -10,8 +10,8 @@ const config = {
     height: 600,
     pixelArt: false,
     zoom: 1.0,
-    scene: StartingScene,
-    // scene: PreloaderScene,
+    // scene: StartingScene,
+    scene: PreloaderScene,
     physics: {
         default: "arcade",
         arcade: {

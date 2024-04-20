@@ -32,7 +32,9 @@ const BG_LERP_DELTA = 1 / Math.pow(2, BG_COLOR_UPDATE_FRAMESPAWN);
 
 class PreloaderScene extends Phaser.Scene {
 
+    // @ts-ignore
     #preloaderImage: Phaser.GameObjects.Image;
+    // @ts-ignore
     #loadingText: Phaser.GameObjects.Text;
     #captionDotsCounter = 0;
     #updateCounter = 0;
@@ -50,8 +52,6 @@ class PreloaderScene extends Phaser.Scene {
         this.load.image('logo', '/src/assets/clown-emoji.png');
 
         // Display loading text or a loading bar here
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
         this.#loadingText = this.make.text({
             ...LOADING_CAPTION_ORIGIN,
             text: LOADING_TEXT_BASE,
@@ -81,7 +81,7 @@ class PreloaderScene extends Phaser.Scene {
             loop: true
         });
 
-        this.#captionLoop = this.time.addEvent({
+        this.time.addEvent({
             delay: 1000, // Spawn a new caption every second
             callback: this.spawnNextCaption,
             callbackScope: this,
@@ -108,7 +108,6 @@ class PreloaderScene extends Phaser.Scene {
             }
         });
     }
-    #captionLoop:  Phaser.Time.TimerEvent;
 
     get #captionsSpacing() {
         return  Number(this.sys.game.config.height) / 3;
@@ -118,6 +117,7 @@ class PreloaderScene extends Phaser.Scene {
         const captionsCnt = this.#captions.length;
         if (captionsCnt === 3) return;
 
+        // @ts-ignore
         const y = (this.#captionsSpacing * (captionsCnt + 0.5)) % this.sys.game.config.height;
         const captionText = CAPTIONS[captionsCnt];
 
@@ -183,7 +183,7 @@ class PreloaderScene extends Phaser.Scene {
         this.#preloaderImage.rotation += 0.04;
     }
 
-    update(time, delta) {
+    update() {
         this.updatePreloaderImage();
 
         this.updateCaptions();
