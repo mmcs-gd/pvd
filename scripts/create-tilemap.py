@@ -9,14 +9,15 @@ def is_directory_with_only_files(path):
 
 
 def create_tilemap_for_directory(directory):
-    dirs_with_only_files = [os.path.join(directory, d) for d in os.listdir(directory)
+    dirs_with_only_files = [
+        os.path.join(directory, d) for d in os.listdir(directory)
                             if is_directory_with_only_files(os.path.join(directory, d))]
 
     rows = []
 
     for subdir in dirs_with_only_files:
         images = [
-            Image.open(os.path.join(subdir, f)) for f in os.listdir(subdir) if f.endswith('.png')
+            Image.open(os.path.join(subdir, f)) for f in os.listdir(subdir) if f.endswith(('.png'))
         ]
         widths, heights = zip(*(i.size for i in images))
         total_width = sum(widths)
@@ -28,7 +29,6 @@ def create_tilemap_for_directory(directory):
             x_offset += img.width
         rows.append(row_image)
 
-    # Concatenate all rows vertically to create the tilemap
     if rows:
         total_height = sum(img.height for img in rows)
         max_width = max(img.width for img in rows)
@@ -37,7 +37,9 @@ def create_tilemap_for_directory(directory):
         for row in rows:
             tilemap.paste(row, (0, y_offset))
             y_offset += row.height
-        tilemap.save(os.path.join(directory, f'Tilemap_{directory}.png'))
+        output_file = os.path.join(directory, 'tilemap.png')
+        tilemap.save(output_file)
+        print(f'Tilemap creation success: {output_file}')
 
 
 def spawn_tilemaps(directory):
@@ -48,5 +50,5 @@ def spawn_tilemaps(directory):
 
 directory_path = './../src/assets/sprites/pack/Characters/'
 
-
-spawn_tilemaps(directory_path)
+if __name__ == '__main__':
+    spawn_tilemaps(directory_path)
