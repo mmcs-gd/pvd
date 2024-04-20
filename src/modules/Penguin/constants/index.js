@@ -1,1 +1,1 @@
-export { bodiesMap, gunsMap } from "./assetsMaps";
+export { bodiesMap, gunsMap } from './assetsMaps.js';

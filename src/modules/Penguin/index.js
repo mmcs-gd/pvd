@@ -1,4 +1,4 @@
-export { Penguin } from "./Penguin";
-export { SampleScene } from "./SampleScene";
-export { bodiesMap, gunsMap } from "./constants";
-export { loadAssets } from "./utils";
+export { Penguin } from './Penguin.js';
+export { SampleScene } from './SampleScene.js';
+export { bodiesMap, gunsMap } from './constants/index.js';
+export { loadAssets } from './utils/loadAssets.js';

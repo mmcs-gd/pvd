@@ -1,20 +1,20 @@
-import { importsToMap } from "../utils";
+import { importsToMap } from '../utils/importsToMap.js';
 
-const bodiesPath = "../assets/bodies/";
-const gunsPath = "../assets/guns/";
+const bodiesPath = '../assets/bodies/';
+const gunsPath = '../assets/guns/';
 
 /** @type {Record<string, string>} */
-const bodiesImports = import.meta.glob(`../assets/bodies/*.png`, {
-  eager: true,
-  query: "?url",
-  import: "default",
+const bodiesImports = import.meta.glob('../assets/bodies/*.png', {
+    eager: true,
+    query: '?url',
+    import: 'default',
 });
 
 /** @type {Record<string, string>} */
-const gunsImports = import.meta.glob(`../assets/guns/*.png`, {
-  eager: true,
-  query: "?url",
-  import: "default",
+const gunsImports = import.meta.glob('../assets/guns/*.png', {
+    eager: true,
+    query: '?url',
+    import: 'default',
 });
 
 /**
