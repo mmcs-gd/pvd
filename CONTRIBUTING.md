@@ -4,12 +4,12 @@ Thank you for your interest in contributing to this project! We appreciate your 
 
 ### Coding Style and Standards
 
-* **ES6 Classes**: We use ES6 classes throughout the project. Make sure you are familiar with class syntax and concepts like `inheritance`, `constructors`, and `methods` (see [docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)).
+* **ES6 Classes**: We use ES6 classes throughout the project. Make sure you are familiar with class syntax and concepts like `inheritance`, `constructors`, and `methods`.
 * **Explicit Class Fields**: While working with JavaScript always explicitly declare class fields using the `class field declarations` syntax. Avoid using the constructor to define properties.
 * **JSDoc Comments**: Document your code using JSDoc comments. This helps with understanding the purpose and usage of classes, methods, and properties. Refer to the `example below` for the expected style. Clearly define types for properties and function parameters within JSDoc comments.
 
 ### Example: Person Class
-JavaScript:
+JavaScript (see [docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)):
 ``` javascript
 class Person {
     /** @type {string} */ name;
@@ -37,7 +37,7 @@ class Person {
 }
 ```
 
-TypeScript:
+TypeScript (see [docs](https://www.typescriptlang.org/docs/handbook/2/classes.html)):
 ``` typescript
 class Person {
     public name: string;
