@@ -1,7 +1,7 @@
 import './style.css'
 
 import Phaser from 'phaser'
-// import StartingScene from './scenes/starting-scene.js';
+import StartingScene from './scenes/starting-scene.js';
 import {PreloaderScene} from "./scenes/loading-scene.ts";
 
 const config = {
@@ -10,9 +10,8 @@ const config = {
     height: 600,
     pixelArt: false,
     zoom: 1.0,
-    // scene: StartingScene,
-    scene: PreloaderScene,
-    // backgroundColor: '#2e2a47', // Set to any hex color you like, e.g., black
+    scene: StartingScene,
+    // scene: PreloaderScene,
     physics: {
         default: "arcade",
         arcade: {

@@ -1,5 +1,3 @@
-import {assetToPathMap} from "../resources/asset-keys";
-
 const LOADING_TEXT_BASE = 'Loading';
 const RAINBOW_COLORS: Array<Phaser.Display.Color> = [
     Phaser.Display.Color.ValueToColor('FA5643'), // red
@@ -49,7 +47,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('logo', '/clown-emoji.png');
+        this.load.image('logo', '/src/assets/clown-emoji.png');
 
         // Display loading text or a loading bar here
         const width = this.cameras.main.width;

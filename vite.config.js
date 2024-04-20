@@ -1,5 +1,5 @@
 export default {
-    publicDir: 'assets/',
+    // publicDir: 'assets/',
     base: '/pvd/',
     server: {
         https: false,
