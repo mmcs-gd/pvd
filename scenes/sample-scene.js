@@ -1,7 +1,7 @@
 // @ts-check
 import Phaser from "phaser";
-import { Penguin } from "./Penguin";
-import { loadAssets } from "./utils";
+import { Penguin } from "../src/modules/Penguin/Penguin";
+import { loadAssets } from "../src/modules/Penguin/utils";
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
