@@ -45,9 +45,8 @@ class AudioManager {
 
     // TODO: move this into a config
     #init_builtin_sounds() {
-        let sfxpath = `${this.#assetsPath}/sfx`;
-        this.addSound("gunshot", [`${sfxpath}/gunshot.mp3`, `${sfxpath}/gunshot.ogg`], false, AudioType.SFX);
-        this.addSound("bullet_impact", [`${sfxpath}/bullet_impact.mp3`, `${sfxpath}/bullet_impact.ogg`], false, AudioType.SFX);
+        this.addSound("gunshot", [`sfx/gunshot.mp3`, `sfx/gunshot.ogg`], false, AudioType.SFX);
+        this.addSound("bullet_impact", [`sfx/bullet_impact.mp3`, `sfx/bullet_impact.ogg`], false, AudioType.SFX);
     }
 
     /*
@@ -59,6 +58,7 @@ class AudioManager {
      * @param {number} base_volume Base sound attenuation (if sounds are not initially balanced against each other).
      */
     addSound(id, assets, loop = false, type = AudioType.SFX, base_volume = 1.) {
+        assets = assets.map(path => `${this.#assetsPath}/${path}`);
         this.#soundLibrary[id] = new Sound(
             id = id,
             assets = assets,
