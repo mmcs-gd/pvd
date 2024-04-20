@@ -45,11 +45,19 @@ def crop_images(directory_path: str):
 
     for filename, image in images_map.items():
         cropped_image = image[top:bottom, left:right]
-        output_path = os.path.join(directory_path, f'cropped_{filename}')
+        output_path = os.path.join(directory_path, filename)
         cv2.imwrite(output_path, cropped_image)
-        print(f'Image {filename} cropped and saved as {output_path}')
+        print(f'Crop success: {output_path}')
 
 
-directory_path = './../src/assets/sprites/pack/Characters/Dogs/Dog01/Dead'
+directory_path = './../src/assets/sprites/pack/Characters/'
 
-crop_images(directory_path)
+
+def crop_images_recursive(directory_path: str):
+
+    for subdir, dirs, files in os.walk(directory_path):
+        if all(os.path.isfile(os.path.join(subdir, name)) for name in os.listdir(subdir)):
+            crop_images(subdir)
+
+
+crop_images_recursive(directory_path)
