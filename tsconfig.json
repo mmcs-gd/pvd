@@ -20,5 +20,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  "exclude": ["src/assets"]
+  "exclude": [
+    "assets"
+  ]
 }

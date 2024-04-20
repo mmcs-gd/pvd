@@ -1,5 +1,5 @@
 const assetToPathMap = {
-    clownEmoji: '/src/assets/clown-emoji.png'
+    clownEmoji: '/clown-emoji.png'
 }
 
 export {

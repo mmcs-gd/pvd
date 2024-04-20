@@ -13,7 +13,7 @@ const RAINBOW_COLORS: Array<Phaser.Display.Color> = [
 
 const CAPTIONS = [
     "Пес, пес, будешь майонез, пес?",
-    "Вуф-вуф!",
+    "Вуф-вуф",
     "Я не люблю майонез!",
 ];
 
@@ -27,6 +27,11 @@ const CAPTION_STYLE = {
     fill: '#ffffff'
 };
 
+// in two's exponent
+const CAPTION_DOTS_UPDATE_FRAMESPAWN = 4;
+const BG_COLOR_UPDATE_FRAMESPAWN = 6;
+const BG_LERP_DELTA = 1 / Math.pow(2, BG_COLOR_UPDATE_FRAMESPAWN);
+
 class PreloaderScene extends Phaser.Scene {
 
     #preloaderImage: Phaser.GameObjects.Image;
@@ -36,7 +41,9 @@ class PreloaderScene extends Phaser.Scene {
 
     #currentBgColorIdx = 0;
     #bgColorLerpValue = 0;
-    #captionsSpawned = 0;
+
+    #captions: Array<Phaser.GameObjects.Text> = [];
+
     constructor() {
         super('PreloaderScene');
     }
@@ -76,12 +83,11 @@ class PreloaderScene extends Phaser.Scene {
             loop: true
         });
 
-        // Time event to start the caption loop
-        this.time.addEvent({
-            delay: 1000, // Start after 1 second
-            callback: this.startCaptionLoop,
+        this.#captionLoop = this.time.addEvent({
+            delay: 1000, // Spawn a new caption every second
+            callback: this.spawnNextCaption,
             callbackScope: this,
-            loop: false
+            loop: true
         });
     }
 
@@ -104,78 +110,61 @@ class PreloaderScene extends Phaser.Scene {
             }
         });
     }
-    #isCaptionLoopRunning = false;
     #captionLoop:  Phaser.Time.TimerEvent;
 
-    startCaptionLoop() {
-        if (this.#isCaptionLoopRunning) return;
-        this.#isCaptionLoopRunning = true;
-
-        // Time event to spawn captions in sequence
-        this.#captionLoop = this.time.addEvent({
-            delay: 1000, // Spawn a new caption every second
-            callback: this.spawnNextCaption,
-            callbackScope: this,
-            loop: true
-        });
-
-        // Time event to clear all captions after a delay
-        this.time.addEvent({
-            delay: 4000, // Wait for 10 seconds before clearing
-            callback: this.clearCaptions,
-            callbackScope: this,
-            loop: false
-        });
+    get #captionsSpacing() {
+        return  Number(this.sys.game.config.height) / 3;
     }
 
     spawnNextCaption() {
-        // Calculate the y position based on the index and the height of each caption
-        const captionY = Number(this.sys.game.config.height) / 3; // Adjust as needed for font size and line spacing
-        const y = captionY * ((this.#captionsSpawned  % 3) + 0.5) % this.sys.game.config.height;
+        const captionsCnt = this.#captions.length;
+        if (captionsCnt === 3) return;
 
-        // Get a random caption from the array
-        const captionText = CAPTIONS[this.#captionsSpawned  % 3 % CAPTIONS.length];
+        const y = (this.#captionsSpacing * (captionsCnt + 0.5)) % this.sys.game.config.height;
+        const captionText = CAPTIONS[captionsCnt];
 
-        // Create a text object at a random position
-        const text = this.add.text(LOADING_CAPTION_ORIGIN.x,y, captionText, CAPTION_STYLE);
-        text.setOrigin(0, 0); // Set origin to center for proper rotation
+        const text = this.add.text(LOADING_CAPTION_ORIGIN.x, y, captionText, CAPTION_STYLE);
+        text.setOrigin(0, 0);
         text.setDepth(Number.MAX_SAFE_INTEGER);
+        this.#captions.push(text);
 
-        // Set the rotation and destroy timer
-        this.tweens.add({
-            targets: text,
-            // angle: 360,  // Complete one full rotation (360 degrees)
-            angle: 0,
-            duration: 2000, // Rotate for 2000 milliseconds (2 seconds)
-            ease: 'Linear', // Linear rotation speed
-        });
-
-        this.#captionsSpawned += 1;
+        if (this.#captions.length === 3) {
+            this.time.delayedCall(2000, this.clearCaptions, [], this);
+        }
     }
 
     clearCaptions() {
-        // Stop the caption loop
-        this.#captionLoop.destroy();
-
-        // Clear all existing captions
-        this.children.each((child) => {
-            if (child instanceof Phaser.GameObjects.Text && child !== this.#loadingText) {
-                child.destroy();
-            }
-        });
-
-        this.#isCaptionLoopRunning = false;
-
-        // Restart the caption loop after a delay
-        this.time.delayedCall(0, this.startCaptionLoop, [], this);
+        this.#captions.forEach((child) => {
+            child.destroy();
+        })
+        this.#captions.length = 0;
     }
 
-    update(time, delta) {
-        // Increase the rotation of the image by a small amount each frame
-        this.#preloaderImage.rotation += 0.04;
+    get #nextBgColorIdx() {
+        return (this.#currentBgColorIdx + 1) % RAINBOW_COLORS.length;
+    }
 
-        // update captions
+    updateBgColor() {
+        this.#bgColorLerpValue += BG_LERP_DELTA;
 
+        if ((this.#updateCounter >> BG_COLOR_UPDATE_FRAMESPAWN << BG_COLOR_UPDATE_FRAMESPAWN ) === this.#updateCounter) {
+            this.#bgColorLerpValue %= 1;
+            this.#currentBgColorIdx = this.#nextBgColorIdx;
+        }
+
+        // Get the interpolated color
+        const color = Phaser.Display.Color.Interpolate.ColorWithColor(
+            RAINBOW_COLORS[this.#currentBgColorIdx],
+            RAINBOW_COLORS[this.#nextBgColorIdx],
+            1,
+            this.#bgColorLerpValue
+        );
+
+        let newColor = Phaser.Display.Color.GetColor(color.r, color.g, color.b);
+        this.cameras.main.setBackgroundColor(newColor);
+    }
+
+    updateCaptions () {
         this.children.each((child) => {
             if (child instanceof Phaser.GameObjects.Text) {
                 if (child === this.#loadingText) {
@@ -186,38 +175,24 @@ class PreloaderScene extends Phaser.Scene {
             }
         });
 
-        // this.#loadingText.text = `${LOADING_TEXT_BASE}${ '.'.repeat(this.#captionDotsCounter)}`;
-
         // update number of dots every 512 frames
-        if ((this.#updateCounter >> 4 << 4 ) === this.#updateCounter) {
+        if ((this.#updateCounter >> CAPTION_DOTS_UPDATE_FRAMESPAWN << CAPTION_DOTS_UPDATE_FRAMESPAWN ) === this.#updateCounter) {
             this.#captionDotsCounter = (this.#captionDotsCounter + 1) % 4;
         }
+    }
+
+    updatePreloaderImage() {
+        this.#preloaderImage.rotation += 0.04;
+    }
+
+    update(time, delta) {
+        this.updatePreloaderImage();
+
+        this.updateCaptions();
+
+        this.updateBgColor();
+
         this.#updateCounter +=1 ;
-
-       // ============== scene bg color
-
-        // Update the lerp value by a small amount each frame, adjust the 0.002 to speed up/slow down
-        this.#bgColorLerpValue += 0.01;
-
-        if (this.#bgColorLerpValue > 1) {
-            this.#bgColorLerpValue = 0;
-            this.#currentBgColorIdx++;
-
-            if (this.#currentBgColorIdx >= RAINBOW_COLORS.length - 1) {
-                this.#currentBgColorIdx = 0;
-            }
-        }
-
-        // Get the interpolated color
-        const color = Phaser.Display.Color.Interpolate.ColorWithColor(
-            RAINBOW_COLORS[this.#currentBgColorIdx],
-            RAINBOW_COLORS[(this.#currentBgColorIdx + 1) % RAINBOW_COLORS.length],
-            100,
-            this.#bgColorLerpValue * 100
-        );
-
-        let newColor = Phaser.Display.Color.GetColor(color.r, color.g, color.b);
-        this.cameras.main.setBackgroundColor(newColor);
     }
 }
 
