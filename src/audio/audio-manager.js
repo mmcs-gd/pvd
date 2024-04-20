@@ -46,7 +46,8 @@ class AudioManager {
     // TODO: move this into a config
     #init_builtin_sounds() {
         let sfxpath = `${this.#assetsPath}/sfx`;
-        this.addSound("gunshot", [`${sfxpath}/gunshot.mp3`, `${sfxpath}/gunshot.ogg`], AudioType.SFX);
+        this.addSound("gunshot", [`${sfxpath}/gunshot.mp3`, `${sfxpath}/gunshot.ogg`], false, AudioType.SFX);
+        this.addSound("bullet_impact", [`${sfxpath}/bullet_impact.mp3`, `${sfxpath}/bullet_impact.ogg`], false, AudioType.SFX);
     }
 
     /*
