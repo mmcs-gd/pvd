@@ -1,5 +1,5 @@
-import {assets} from './AssetImporter'
-import config from '../../assets/animations/dogs.json'
+import {assets} from './AssetImporter.js';
+import config from '../../assets/animations/dogs.json';
 
 class DogAnimationLoader {
     // frame names loaded as dog_XX_attack_frame_YY without leading zeroes!
@@ -8,7 +8,7 @@ class DogAnimationLoader {
      * @param {string} assetsPath
      * @param {Phaser.Scene} scene
      */
-   static preload(assetsPath, scene) {
+    static preload(assetsPath, scene) {
         for (const [dogName, dogAnimations] of Object.entries(config)) {
             for (const [name, frameCount] of Object.entries(dogAnimations)) {
 
@@ -46,7 +46,7 @@ class DogAnimationLoader {
     }
     /**
      * Loads all dogs from config to the scene
-     * @param {Phaser.scene} scene
+     * @param {Phaser.Scene} scene
      * @param {string} dogName
      * @param {string} actionName
      * @param {number} x
@@ -60,4 +60,4 @@ class DogAnimationLoader {
 
 }
 
-export {DogAnimationLoader}
+export {DogAnimationLoader};
