@@ -60,4 +60,5 @@ def crop_images_recursive(directory_path: str):
             crop_images(subdir)
 
 
-crop_images_recursive(directory_path)
+if __name__ == '__main__':
+    crop_images_recursive(directory_path)
