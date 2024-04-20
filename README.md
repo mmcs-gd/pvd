@@ -1,4 +1,5 @@
 # Development
+### Check out [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ```
 npm install
@@ -9,5 +10,5 @@ npm start
 
 ```
 npm run build
-cd ./dist
+cd ./docs
 ```
