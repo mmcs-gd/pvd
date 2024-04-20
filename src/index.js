@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 
 import StartingScene from '../scenes/starting-scene.js';
+import BulletsDemoScene from '../scenes/bullets-demo.js';
 
 const config = {
     type: Phaser.AUTO,
