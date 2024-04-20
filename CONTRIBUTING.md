@@ -16,7 +16,7 @@ class Person {
     /** @type {number} */ age;
     /** @type {string} */ #social_security_number; // private
 
-    /*
+    /**
      * Creates a new Person instance.
      * @param {string} name The person's name.
      * @param {number} age The person's age.
@@ -27,7 +27,7 @@ class Person {
         // ...
     }
 
-    /*
+    /**
      * Returns a greeting message from the person.
      * @returns {string} The greeting message.
      */
@@ -44,7 +44,7 @@ class Person {
     age: string; // 'public' may be omitted as it is default
     private social_security_number: string; // private
 
-    /*
+    /**
      * Creates a new Person instance.
      */
     constructor(name: string, age: string) {
@@ -52,7 +52,7 @@ class Person {
         this.age = age;
     }
 
-    /*
+    /**
      * Returns a greeting message from the person.
      */
     greet() { // return type may be omitted as it it is automatically deduced
