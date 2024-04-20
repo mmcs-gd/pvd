@@ -49,7 +49,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('logo', assetToPathMap.clownEmoji);
+        this.load.image('logo', '/assets/clown-emoji.png');
 
         // Display loading text or a loading bar here
         const width = this.cameras.main.width;
