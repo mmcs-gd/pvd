@@ -13,11 +13,15 @@ def create_tilemap_for_directory(directory):
         os.path.join(directory, d) for d in os.listdir(directory)
                             if is_directory_with_only_files(os.path.join(directory, d))]
 
+    dirs_with_only_files.sort()
+
     rows = []
 
     for subdir in dirs_with_only_files:
+        filenames = [f for f in os.listdir(subdir) if f.endswith(('.png'))]
+        filenames.sort()
         images = [
-            Image.open(os.path.join(subdir, f)) for f in os.listdir(subdir) if f.endswith(('.png'))
+            Image.open(os.path.join(subdir, f)) for f in filenames
         ]
         widths, heights = zip(*(i.size for i in images))
         total_width = sum(widths)
@@ -48,7 +52,7 @@ def spawn_tilemaps(directory):
             create_tilemap_for_directory(subdir)
 
 
-directory_path = './../src/assets/sprites/pack/Characters/'
+directory_path = './../src/assets/sprites/pack/Characters'
 
 if __name__ == '__main__':
     spawn_tilemaps(directory_path)
