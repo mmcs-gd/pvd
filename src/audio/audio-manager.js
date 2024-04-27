@@ -60,6 +60,10 @@ class AudioManager {
         this.addSound('bullet_impact', ['sfx/bullet_impact.mp3', 'sfx/bullet_impact.ogg'], false, AudioType.SFX);
     }
 
+    #update_volume(sound) {
+        sound.handle.setVolume(this.#volumeLevels.get(sound.type) * sound.base_volume);
+    }
+
     /**
      * Adds a new sound to the library, which can later be played.
      * @param {string} id The sound ID which you'll use later.
@@ -86,6 +90,10 @@ class AudioManager {
      */
     setVolume(audio_type, volume_level) {
         this.#volumeLevels.set(audio_type, volume_level);
+
+        for (const [key, value] of Object.entries(this.#soundLibrary)) {
+            this.#update_volume(value);
+        }
     }
 
     /**
@@ -109,7 +117,8 @@ class AudioManager {
      */
     play(key) {
         let sound = this.#soundLibrary[key];
-        sound.handle.play(null, { loop: sound.loop, volume: this.#volumeLevels.get(sound.type) * sound.base_volume });
+        this.#update_volume(sound);
+        sound.handle.play();
     }
 }
 
