@@ -1,10 +1,6 @@
 import Phaser from 'phaser';
 import { BulletsManager } from '../src/systems/BulletsManager.js';
 
-import dungeonRoomJson from '../assets/dungeon_room.json';
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
-import Idle_00 from './../assets/sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png';
-
 // debug bullets params
 const bulletVelocity = 200;
 const maxBulletDistance = 400;
@@ -21,10 +17,10 @@ export default class BulletsDemoScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tiles', tilemapPng);
-        this.load.tilemapTiledJSON('map', dungeonRoomJson);
+        this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
+        this.load.tilemapTiledJSON('map', 'dungeon_room.json');
 
-        this.load.image('dog01', Idle_00);
+        this.load.image('dog01', 'sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png');
 
         BulletsManager.preload(this);
     }
