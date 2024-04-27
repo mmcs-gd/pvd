@@ -9,7 +9,7 @@ const config = {
     height: 600,
     pixelArt: false,
     zoom: 1.0,
-    scene: [MainMenuScene, StartingScene],
+    scene: StartingScene,
     physics: {
         default: 'arcade',
         arcade: {
