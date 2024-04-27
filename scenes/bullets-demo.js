@@ -1,7 +1,8 @@
-import { BulletsManager } from '../src/systems/BulletsManager';
+import Phaser from 'phaser';
+import { BulletsManager } from '../src/systems/BulletsManager.js';
 
-import dungeonRoomJson from '../assets/dungeon_room.json'
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png'
+import dungeonRoomJson from '../assets/dungeon_room.json';
+import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
 import Idle_00 from './../assets/sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png';
 
 // debug bullets params
@@ -12,32 +13,31 @@ const shootingFreq = 0.4;
 const bulletsScale = 1;
 const bulletsDepth = 0; // set 11 - bullets will display above column
 
-let BulletsDemoScene = new Phaser.Class({
+export default class BulletsDemoScene extends Phaser.Scene {
+    /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
 
-    Extends: Phaser.Scene,
+    constructor() {
+        super({ key: 'BulletsDemoScene' });
+    }
 
-    initialize: function BulletsDemoScene() {
-        Phaser.Scene.call(this, { key: 'BulletsDemoScene' });
-    },
+    preload() {
+        this.load.image('tiles', tilemapPng);
+        this.load.tilemapTiledJSON('map', dungeonRoomJson);
 
-    preload: function () {
-        this.load.image("tiles", tilemapPng);
-        this.load.tilemapTiledJSON("map", dungeonRoomJson);
-
-        this.load.image("dog01", Idle_00);
+        this.load.image('dog01', Idle_00);
 
         BulletsManager.preload(this);
-    },
+    }
 
-    create: function () {
+    create() {
         this.gameObjects = [];
-        const map = this.make.tilemap({ key: "map" });
+        const map = this.make.tilemap({ key: 'map' });
 
-        const tileset = map.addTilesetImage("Dungeon_Tileset", "tiles");
+        const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
-        const belowLayer = map.createStaticLayer("Floor", tileset, 0, 0);
-        const worldLayer = map.createStaticLayer("Walls", tileset, 0, 0);
-        const aboveLayer = map.createStaticLayer("Upper", tileset, 0, 0);
+        const belowLayer = map.createLayer('Floor', tileset, 0, 0);
+        const worldLayer = map.createLayer('Walls', tileset, 0, 0);
+        const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
         this.tileSize = 32;
 
         worldLayer.setCollisionBetween(1, 500);
@@ -47,7 +47,7 @@ let BulletsDemoScene = new Phaser.Class({
         this.physics.world.bounds.height = map.heightInPixels;
 
         // spawn not animated dog for debug collision
-        const dog = this.add.sprite(300, 500, "dog01");
+        const dog = this.add.sprite(300, 500, 'dog01');
         this.physics.add.existing(dog);
         dog.setScale(0.5);
         dog.body.setSize(180, 130);
@@ -63,18 +63,18 @@ let BulletsDemoScene = new Phaser.Class({
 
         this.lastTick = getTime();
 
-        // test bullet reactions with realtime added objects 
+        // test bullet reactions with realtime added objects
         setTimeout(() => {
-            const newDog = this.add.sprite(600, 200, "dog01");
+            const newDog = this.add.sprite(600, 200, 'dog01');
             this.physics.add.existing(newDog);
             newDog.setScale(0.5);
             newDog.body.setSize(180, 130);
             newDog.body.setOffset(50, 48);
-            this.gameObjects.push(newDog)
+            this.gameObjects.push(newDog);
         }, 3000);
-    },
+    }
 
-    update: function () {
+    update() {
         const deltaTime = (getTime() - this.lastTick) / 1000;
 
         if (this.gameObjects) {
@@ -90,35 +90,37 @@ let BulletsDemoScene = new Phaser.Class({
         if (this.reloadingTime < 0) {
             let randType = Math.random();
 
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [0, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [0, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [-1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
 
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [-1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? "bullet1" : randType < 0.6 ? "bullet2" : "bullet3", [300, 200], bulletsScale, [-1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
 
             this.reloadingTime = shootingFreq;
         }
 
         // Setup debug boundaries
-        this.input.keyboard.on("keydown-D", event => {
+        this.input.keyboard.on('keydown-D', event => {
             // Turn on physics debugging to show player's hitbox
             this.physics.world.createDebugGraphic();
         });
 
         this.lastTick = getTime();
-    },
+    }
 
+    /**
+     * @param {number} tileX
+     * @param {number} tileY
+     */
     tilesToPixels(tileX, tileY) {
         return [tileX * this.tileSize, tileY * this.tileSize];
     }
-})
+}
 
 function getTime() {
     return new Date().getTime();
 }
-
-export default BulletsDemoScene

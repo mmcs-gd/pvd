@@ -10,5 +10,5 @@ npm start
 
 ```
 npm run build
-cd ./docs
+cd ./dist
 ```
