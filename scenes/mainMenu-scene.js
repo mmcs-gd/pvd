@@ -1,64 +1,61 @@
+import Phaser from 'phaser';
 
-import buttonPngDefault from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3_1.png'
-import buttonPngHover from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3 copy.png'
-import backgroundImage from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 2.png'
-import { ButtonMethods } from '../src/utils/ButtonMethods';
+import buttonPngDefault from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3_1.png';
+import buttonPngHover from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3 copy.png';
+import backgroundImage from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 2.png';
+import { ButtonMethods } from '../src/utils/ButtonMethods.js';
 
-let MainMenuScene = new Phaser.Class({
-    Extends: Phaser.Scene,
-    
-    initialize: function MainMenuScene() 
-    {
-        Phaser.Scene.call(this, {key: 'MainMenuScene'});
-    },
-    
-    preload: function () 
-    {
+export default class MainMenuScene extends Phaser.Scene {
+
+    constructor() {
+        super({ key: 'MainMenuScene'});
+    }
+
+
+    preload(){
         this.load.image('playButtonDefault', buttonPngDefault);
         this.load.image('playButtonHover', buttonPngHover);
         this.load.image('backgroundImage', backgroundImage);
-    },
+    }
 
-    create: function () 
-    {
-        let mainMenuText = this.add.text(this.cameras.main.width/2, 150, 'Главное меню', 
-        {
-            font: "64px impact",
-            fill: "#FFFFFF",
-            align: "center",
-            stroke: "#8B4513",
-            strokeThickness: 5,
-            shadow: {
-                offsetX: 3,
-                offsetY: 3,
-                color: '#000',
-                blur: 0,
-                stroke: false,
-                fill: true
-            }
-        }).setOrigin(0.5, 0);
+    create() {
+        let mainMenuText = this.add.text(this.cameras.main.width/2, 150, 'Главное меню',
+            {
+                font: '64px impact',
+                // @ts-ignore
+                fill: '#FFFFFF',
+                align: 'center',
+                stroke: '#8B4513',
+                strokeThickness: 5,
+                shadow: {
+                    offsetX: 3,
+                    offsetY: 3,
+                    color: '#000',
+                    blur: 0,
+                    stroke: false,
+                    fill: true
+                }
+            }).setOrigin(0.5, 0);
 
         mainMenuText.setOrigin(0.5, 0.5);
-        
+
         let backgroundImage = this.add.image(0, 0, 'backgroundImage');
         backgroundImage.setOrigin(0,0);
         backgroundImage.setDepth(-1);
-        
+
         let buttonTextStyle = {
-            font: "32px impact",
-            fill: "#FFD700",
-            align: "center",
-            stroke: "#8B4513",
+            font: '32px impact',
+            fill: '#FFD700',
+            align: 'center',
+            stroke: '#8B4513',
             strokeThickness: 3
         };
 
         let playButton = ButtonMethods.createLoadSceneButton(0, 0, 'playButtonDefault', 'playButtonHover', this);
         let text = ButtonMethods.createButtonLabel(playButton, 'Играть', buttonTextStyle, this);
-        
+
         let container = this.add.container(this.game.renderer.width/2,this.game.renderer.height /2);
         container.add(playButton);
         container.add(text);
-    },
-});
-
-export default MainMenuScene;
+    }
+}
