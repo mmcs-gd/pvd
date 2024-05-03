@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
 import dungeonRoomJson from '../assets/dungeon_room.json';
 import { DogAnimationLoader } from '../src/utils/DogAnimationLoader.js';
 
@@ -13,7 +12,7 @@ export default class StartingScene extends Phaser.Scene {
     preload() {
 
         // loading map tiles and json with positions
-        this.load.image('tiles', tilemapPng);
+        this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
         this.load.tilemapTiledJSON('map', dungeonRoomJson);
 
         // loading sprite-sheets

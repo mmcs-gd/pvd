@@ -1,4 +1,3 @@
-import {assets} from './AssetImporter.js';
 import config from '../../assets/animations/dogs.json';
 
 class DogAnimationLoader {

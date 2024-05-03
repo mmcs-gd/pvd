@@ -26,7 +26,7 @@ export class ButtonMethods
     static createLoadSceneButton(x, y, defaultSprite, hoverSprite, scene) {
         let button = scene.add.sprite(x, y, defaultSprite)
             .setInteractive()
-            .on('pointerdown', () => { ButtonMethods.loadSceneClickButton('StartingScene', scene);})
+            .on('pointerdown', () => { ButtonMethods.loadSceneClickButton('BulletsDemoScene', scene);})
             .on('pointerover', () => ButtonMethods.replacementButtonSprite(button, hoverSprite))
             .on('pointerout', () => ButtonMethods.replacementButtonSprite(button, defaultSprite));
 

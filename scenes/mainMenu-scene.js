@@ -1,8 +1,5 @@
 import Phaser from 'phaser';
 
-import buttonPngDefault from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3_1.png';
-import buttonPngHover from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 3 copy.png';
-import backgroundImage from '../assets/sprites/pack/UI/Free Upgrade Screen/Artboard 2.png';
 import { ButtonMethods } from '../src/utils/ButtonMethods.js';
 
 export default class MainMenuScene extends Phaser.Scene {
@@ -13,9 +10,9 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
     preload(){
-        this.load.image('playButtonDefault', buttonPngDefault);
-        this.load.image('playButtonHover', buttonPngHover);
-        this.load.image('backgroundImage', backgroundImage);
+        this.load.image('playButtonDefault', 'sprites/pack/UI/Free Upgrade Screen/Artboard 3_1.png');
+        this.load.image('playButtonHover', 'sprites/pack/UI/Free Upgrade Screen/Artboard 3 copy.png');
+        this.load.image('backgroundImage', 'sprites/pack/UI/Free Upgrade Screen/Artboard 2.png');
     }
 
     create() {
