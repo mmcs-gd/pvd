@@ -1,6 +1,6 @@
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png'
-import dungeonRoomJson from '../assets/dungeon_room.json'
-import { DogAnimationLoader } from "../src/utils/DogAnimationLoader"
+import Phaser from 'phaser';
+import dungeonRoomJson from '../assets/dungeon_room.json';
+import { DogAnimationLoader } from '../src/utils/DogAnimationLoader.js';
 import ShopWindow from '../src/UI/shop-window.js';
 import shopIcon from '../assets/sprites/pack/UI/Gameplay Screen/Artboard 10.png';
 import Inventory from '../src/inventory.js';
@@ -14,18 +14,17 @@ import gunSpriteTest1 from '../assets/sprites/pack/Characters/Chickens and Guns/
 import gunSpriteTest2 from '../assets/sprites/pack/Characters/Chickens and Guns/6g.png';
 //! TEST IMPORTS END
 
-let StartingScene = new Phaser.Class({
+export default class StartingScene extends Phaser.Scene {
+    /** @type {object[]} */ gameObjects;
 
-    Extends: Phaser.Scene,
+    constructor() {
+        super({ key: 'StartingScene' });
+    }
 
-    initialize: function StartingScene() {
-        Phaser.Scene.call(this, { key: 'StartingScene' });
-    },
-    preload: function () {
-
-        //loading map tiles and json with positions
-        this.load.image("tiles", tilemapPng);
-        this.load.tilemapTiledJSON("map", dungeonRoomJson);
+    preload() {
+        // loading map tiles and json with positions
+        this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
+        this.load.tilemapTiledJSON('map', dungeonRoomJson);
 
         //! TEST LOADS
         this.load.image('penguinSpriteTest1', penguinSpriteTest1);
@@ -39,10 +38,11 @@ let StartingScene = new Phaser.Class({
 
         //loading sprite-sheets
         // Load dog animations
-        DogAnimationLoader.preload("/assets/sprites/pack/Characters/Dogs", this);
+        DogAnimationLoader.preload('sprites/pack/Characters/Dogs', this);
 
-    },
-    create: function () {
+    }
+
+    create() {
         DogAnimationLoader.create(this);
 
 
@@ -78,17 +78,18 @@ let StartingScene = new Phaser.Class({
         });
         
         this.gameObjects = [];
-        const map = this.make.tilemap({ key: "map" });
+
+        const map = this.make.tilemap({ key: 'map' });
 
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
         // Phaser's cache (i.e. the name you used in preload)
-        const tileset = map.addTilesetImage("Dungeon_Tileset", "tiles");
+        const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
 
         // Parameters: layer name (or index) from Tiled, tileset, x, y
-        const belowLayer = map.createStaticLayer("Floor", tileset, 0, 0);
-        const worldLayer = map.createStaticLayer("Walls", tileset, 0, 0);
-        const aboveLayer = map.createStaticLayer("Upper", tileset, 0, 0);
+        const belowLayer = map.createLayer('Floor', tileset, 0, 0);
+        const worldLayer = map.createLayer('Walls', tileset, 0, 0);
+        const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
         this.tileSize = 32;
 
 
@@ -104,7 +105,7 @@ let StartingScene = new Phaser.Class({
 
 
         // Setup debug boundaries
-        this.input.keyboard.on("keydown-D", event => {
+        this.input.keyboard.on('keydown-D', event => {
             // Turn on physics debugging to show player's hitbox
             this.physics.world.createDebugGraphic();
 
@@ -113,19 +114,22 @@ let StartingScene = new Phaser.Class({
                 .setAlpha(0.75)
                 .setDepth(20);
         });
-    },
-    update: function () {
+    }
+
+    update() {
         if (this.gameObjects) {
             this.gameObjects.forEach(function (element) {
                 element.update();
             });
         }
 
-    },
+    }
 
+    /**
+     * @param {number} tileX
+     * @param {number} tileY
+     */
     tilesToPixels(tileX, tileY) {
         return [tileX * this.tileSize, tileY * this.tileSize];
     }
-});
-
-export default StartingScene
+}
