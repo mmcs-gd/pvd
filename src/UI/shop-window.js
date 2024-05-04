@@ -137,11 +137,11 @@ export default class ShopWindow {
                     }
                     this.inventoryItemContainer.push(item);
                     this.inventory.money -= item.price;
-                    this.coinText.text = this.inventory.money;
+                    this.coinText.text = this.inventory.money.toString();
                     this.#updateShopItemsDisplay();
                 },
                 shopItemPositionX, shopItemPositionY, shopItemWidth, shopItemHeight);
-            shopItem.fillWith(this.buyItems[i]);
+            shopItem.fillWith(this.buyItems[i], this.inventory.money);
             let shopPhaserItem = shopItem.container;
             shopPhaserItem.setDepth(2);
             this.shopItems.push(shopItem);
@@ -154,9 +154,9 @@ export default class ShopWindow {
         let coinIconSize = 30;
         let coinIcon = scene.add.image(0,0, ShopWindow.prefix + 'coinIcon').setOrigin(0.5, 0.5);
         coinIcon.setDisplaySize(coinIconSize, coinIconSize);
-        this.coinText = scene.add.text(-coinIconSize * 0.5, 0, this.inventory.money, {
+        this.coinText = scene.add.text(-coinIconSize * 0.5, 0, this.inventory.money.toString(), {
             fontSize: '16px',
-            fill: '#000000',
+            color: '#000000',
         }).setOrigin(1, 0.5);
         coinContainer.add(coinIcon);
         coinContainer.add(this.coinText);
@@ -224,7 +224,7 @@ export default class ShopWindow {
         ShopWindow.isWindowOpen = true;
         this.startShopItemInd = 0;
         this.#updateShopItemsDisplay();
-        this.coinText.text = this.inventory.money;
+        this.coinText.text = this.inventory.money.toString();
         this.windowContainer.setVisible(true);
     }
 }

@@ -2,7 +2,7 @@ import shopItemBackground from '../../assets/sprites/pack/UI/Shopping Screen/Art
 import activeBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy.png';
 import disabledBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy 4.png';
 import goldIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 8.png';
-import BuyItem from '../buy-item';
+import BuyItem from '../buy-item.js';
 
 export default class ShopItem {
     static /** @type {string} */ prefix;
