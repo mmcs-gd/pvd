@@ -138,7 +138,6 @@ export default class ShopWindow {
                     this.inventoryItemContainer.push(item);
                     this.inventory.money -= item.price;
                     this.coinText.text = this.inventory.money;
-                    console.log(this.inventory);
                     this.#updateShopItemsDisplay();
                 },
                 shopItemPositionX, shopItemPositionY, shopItemWidth, shopItemHeight);
@@ -225,6 +224,7 @@ export default class ShopWindow {
         ShopWindow.isWindowOpen = true;
         this.startShopItemInd = 0;
         this.#updateShopItemsDisplay();
+        this.coinText.text = this.inventory.money;
         this.windowContainer.setVisible(true);
     }
 }
