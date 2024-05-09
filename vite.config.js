@@ -6,7 +6,6 @@ export default defineConfig({
     root: '/',
     server: {
         https: false,
-        port: 3000,
         open: true,
     }
 });
