@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import StartingScene from '../scenes/starting-scene.js';
 import BulletsDemoScene from '../scenes/bullets-demo.js';
 import MainMenuScene from '../scenes/mainMenu-scene.js';
+import { PreloaderScene } from '../scenes/loading-scene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -9,7 +9,7 @@ const config = {
     height: 600,
     pixelArt: false,
     zoom: 1.0,
-    scene: [MainMenuScene, BulletsDemoScene],
+    scene: [PreloaderScene, MainMenuScene, BulletsDemoScene],
     physics: {
         default: 'arcade',
         arcade: {
