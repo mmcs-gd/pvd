@@ -9,7 +9,7 @@ const shootingFreq = 0.4;
 const bulletsScale = 1;
 const bulletsDepth = 0; // set 11 - bullets will display above column
 
-export default class BulletsDemoScene extends Phaser.Scene {
+class BulletsDemoScene extends Phaser.Scene {
     /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
 
     constructor() {
@@ -119,4 +119,8 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
 function getTime() {
     return new Date().getTime();
+}
+
+export {
+    BulletsDemoScene
 }
