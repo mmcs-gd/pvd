@@ -12,7 +12,7 @@ const RAINBOW_COLORS = [
 
 const CAPTIONS = [
     'Пес, пес, будешь майонез, пес?',
-    'Вуф-вуф',   
+    'Вуф-вуф',
     'Я не люблю майонез!',
 ];
 
@@ -50,7 +50,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('logo', '/assets/clown-emoji.png');
+        this.load.image('logo', 'clown-emoji.png');
 
         // Display loading text or a loading bar here
         this.#loadingText = this.make.text({
