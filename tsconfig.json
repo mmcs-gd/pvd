@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "src/*"
+      ]
+    },
+
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -17,10 +26,20 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "outDir": "docs/",
+    "esModuleInterop": true,
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
-    "assets"
+    "piblic",
+    "node_modules",
+    "docs"
   ]
 }

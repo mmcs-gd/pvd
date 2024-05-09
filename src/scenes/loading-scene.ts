@@ -10,15 +10,15 @@ const RAINBOW_COLORS: Array<Phaser.Display.Color> = [
 ];
 
 const CAPTIONS = [
-    "Пес, пес, будешь майонез, пес?",
-    "Вуф-вуф",
-    "Я не люблю майонез!",
+    'Пес, пес, будешь майонез, пес?',
+    'Вуф-вуф',   
+    'Я не люблю майонез!',
 ];
 
 const LOADING_CAPTION_ORIGIN ={
     x: 80,
     y: 40,
-}
+};
 
 const CAPTION_STYLE = {
     font: '20px monospace',
@@ -134,7 +134,7 @@ class PreloaderScene extends Phaser.Scene {
     clearCaptions() {
         this.#captions.forEach((child) => {
             child.destroy();
-        })
+        });
         this.#captions.length = 0;
     }
 
@@ -158,7 +158,7 @@ class PreloaderScene extends Phaser.Scene {
             this.#bgColorLerpValue
         );
 
-        let newColor = Phaser.Display.Color.GetColor(color.r, color.g, color.b);
+        const newColor = Phaser.Display.Color.GetColor(color.r, color.g, color.b);
         this.cameras.main.setBackgroundColor(newColor);
     }
 
@@ -196,4 +196,4 @@ class PreloaderScene extends Phaser.Scene {
 
 export {
     PreloaderScene
-}
+};
