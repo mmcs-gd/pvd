@@ -5,6 +5,7 @@ export default defineConfig({
     base: '/pvd/',
 
     server: {
+        https: false,
         open: true,
     }
 });
