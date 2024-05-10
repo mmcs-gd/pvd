@@ -5,7 +5,7 @@ import { PreloaderScene } from '../scenes/loading-scene.js';
 import { LoaderTestScene } from '../scenes/loader-test-scene.js';
 import StartingScene from '../scenes/starting-scene.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
-import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
+// import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -13,7 +13,7 @@ const config = {
     height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [LoaderTestScene, StartingScene, PreloaderScene, MainMenuScene, BulletsDemoScene],
+    scene: [PreloaderScene, LoaderTestScene, StartingScene, MainMenuScene, BulletsDemoScene],
     physics: {
         default: 'arcade',
         arcade: {

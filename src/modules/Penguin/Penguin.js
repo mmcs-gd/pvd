@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { gunsMap } from 'src/modules/Gun/constants/assetMap.js';
 import { bodiesMap } from 'src/modules/Penguin/constants/assetMap.js';
+import { Gun } from 'src/modules/Gun/Gun.js';
 
 /* Regarding to 0,0 */
 const PENGUIN_BELLY_BUTTON_POSITION = {
@@ -37,6 +38,8 @@ export class Penguin extends Phaser.GameObjects.Container {
     #penguinBody;
     /** @type {Phaser.GameObjects.Image} */
     #gun;
+    /** @type {Gun} */
+    #gunConfig;
 
     get isForwardOrientation() {
         return this.#orientation === 'forward';
@@ -48,11 +51,11 @@ export class Penguin extends Phaser.GameObjects.Container {
    * @param {number} y
    * @param {Object} options
    * @param {string} options.bodyKey
-   * @param {string} options.gunKey
+   * @param {Gun} options.gunConfig
    * @param {Target} [options.target]
    * @param {boolean} [options.faceToTarget=false]
    */
-    constructor(scene, x, y, { bodyKey, gunKey, target, faceToTarget }) {
+    constructor(scene, x, y, { bodyKey, gunConfig, target, faceToTarget }) {
         super(scene, x, y);
 
         if (!bodyKey || !bodiesMap[bodyKey]) {
@@ -60,13 +63,7 @@ export class Penguin extends Phaser.GameObjects.Container {
                 bodyKey ? `Body key ${bodyKey} not found` : 'Body key is required'
             );
         }
-
-        if (!gunKey || !gunsMap[gunKey]) {
-            throw new Error(
-                gunKey ? `Gun key ${gunKey} not found` : 'Gun key is required'
-            );
-        }
-
+        this.#gunConfig = gunConfig;
         this.#target = target;
         this.#faceToTarget = !!faceToTarget;
 
@@ -75,7 +72,7 @@ export class Penguin extends Phaser.GameObjects.Container {
         this.#gun = scene.add.image(
             PENGUIN_BELLY_BUTTON_POSITION.x,
             PENGUIN_BELLY_BUTTON_POSITION.y,
-            gunKey
+            this.#gunConfig.assetKey
         );
 
         this.#gun.setOrigin(0.1, 0.9);

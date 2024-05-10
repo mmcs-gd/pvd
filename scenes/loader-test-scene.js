@@ -3,6 +3,7 @@ import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoade
 import { Penguin } from 'src/modules/Penguin/Penguin.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
+import { Gun } from 'src/modules/Gun/Gun.js';
 
 class LoaderTestScene extends Phaser.Scene {
 
@@ -45,16 +46,35 @@ class LoaderTestScene extends Phaser.Scene {
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
 
-        const sceneCenter = [GAME_CONFIG.width / 2, GAME_CONFIG.height / 2];
-        this.target = this.add.circle(...sceneCenter, 5, 0xff0000);
+        const sceneCenter = {
+            x: GAME_CONFIG.width / 2, y: GAME_CONFIG.height / 2
+        };
+        this.target = this.add.circle(0.5 * sceneCenter.x, sceneCenter.y, 5, 0xff0000);
 
-        // @ts-ignore
-        this.gameObjects.push(new Penguin(this, ...sceneCenter, {
+        const gunConfig1 = new Gun({
+            'id': '9c3f7a68-9da2-4599-b0ae-f0bbd7e709f5',
+            name: 'BOOM-BOOM',
+            assetKey: '7g',
+            weaponType: 'Bomb',
+            damage: 500,
+            cost: 5000,
+            range: 1
+        });
+
+        const penpen1 = new Penguin(this, sceneCenter.x, 0.5 * sceneCenter.y, {
             bodyKey: '2c',
-            gunKey: '2g',
+            gunConfig: gunConfig1,
             target: this.target,
             faceToTarget: true,
-        }));
+        });
+
+        const penpen2 = new Penguin(this, 1.25 * sceneCenter.x, 0.75 * sceneCenter.y, {
+            bodyKey: '3c',
+            gunConfig: gunConfig1,
+            target: this.target,
+            faceToTarget: true,
+        });
+        this.gameObjects.push(penpen1, penpen2);
 
         // Setup debug boundaries
         this.input.keyboard.on('keydown-D', event => {
