@@ -4,14 +4,15 @@ import MainMenuScene from '../scenes/mainMenu-scene.js';
 import { PreloaderScene } from '../scenes/loading-scene.js';
 import { LoaderTestScene } from '../scenes/loader-test-scene.js';
 import StartingScene from '../scenes/starting-scene.js';
+import { GAME_CONFIG } from 'src/resources/game-config.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: GAME_CONFIG.width,
+    height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [StartingScene, LoaderTestScene, PreloaderScene, MainMenuScene, BulletsDemoScene],
+    scene: [LoaderTestScene, StartingScene, PreloaderScene, MainMenuScene, BulletsDemoScene],
     physics: {
         default: 'arcade',
         arcade: {
