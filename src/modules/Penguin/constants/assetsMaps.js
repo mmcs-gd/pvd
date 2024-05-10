@@ -1,4 +1,4 @@
-import { importsToMap } from '../utils/importsToMap.js';
+import { importsToMap } from '../utils/index.js';
 
 const bodiesPath = '../assets/bodies/';
 const gunsPath = '../assets/guns/';

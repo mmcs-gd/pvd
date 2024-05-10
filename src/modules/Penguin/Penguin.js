@@ -1,6 +1,6 @@
 // @ts-check
 import Phaser from 'phaser';
-import { bodiesMap, gunsMap } from './constants/assetsMaps.js';
+import { bodiesMap, gunsMap } from './constants/index.js';
 
 /* Regarding to 0,0 */
 const PENGUIN_BELLY_BUTTON_POSITION = {
