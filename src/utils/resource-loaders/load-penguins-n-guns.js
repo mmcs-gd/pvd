@@ -8,7 +8,7 @@ import { bodiesMap } from 'src/modules/Penguin/constants/assetMap.js';
  * @param {Record<string, string>} [options.bodies = bodiesMap]
  * @param {Record<string, string>} [options.guns = gunsMap]
  */
-export const loadAssets = (
+export const loadPenguinsNGuns = (
     scene,
     { bodies = bodiesMap, guns = gunsMap } = {}
 ) => { 

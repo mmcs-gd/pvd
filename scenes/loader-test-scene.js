@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
 import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
+import { Penguin } from 'src/modules/Penguin/Penguin.js';
+import { GAME_CONFIG } from 'src/resources/game-config.js';
+import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
 
 class LoaderTestScene extends Phaser.Scene {
 
@@ -8,7 +11,7 @@ class LoaderTestScene extends Phaser.Scene {
     }
 
     preload () {
-
+        loadPenguinsNGuns(this);
         //loading map tiles and json with positions
         this.load.image('tiles', '/tileset/Dungeon_Tileset.png?url');
         this.load.tilemapTiledJSON('map', '/dungeon_room.json?url');
@@ -42,10 +45,16 @@ class LoaderTestScene extends Phaser.Scene {
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
 
-        DogAnimationLoader.spawnDog(this, 'Dog01', 'Attack', 200, 200);
-        DogAnimationLoader.spawnDog(this, 'Dog02', 'Walk', 400, 200);
-        DogAnimationLoader.spawnDog(this, 'Dog05', 'Idle', 600, 200);
+        const sceneCenter = [GAME_CONFIG.width / 2, GAME_CONFIG.height / 2];
+        this.target = this.add.circle(...sceneCenter, 5, 0xff0000);
 
+        // @ts-ignore
+        this.gameObjects.push(new Penguin(this, ...sceneCenter, {
+            bodyKey: '2c',
+            gunKey: '2g',
+            target: this.target,
+            faceToTarget: true,
+        }));
 
         // Setup debug boundaries
         this.input.keyboard.on('keydown-D', event => {
@@ -59,7 +68,7 @@ class LoaderTestScene extends Phaser.Scene {
         });
     }
 
-    update () {
+    update() {
         if (this.gameObjects) {
             this.gameObjects.forEach(function (element) {
                 element.update();

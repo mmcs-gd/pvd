@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PenguinsShop } from './PenguinsShop.js';
 import { bodiesMap } from 'src/modules/Penguin/constants/assetMap.js';
 import { gunsMap } from 'src/modules/Gun/constants/assetMap.js';
-import { loadAssets } from 'src/modules/Penguin/utils/loadAssets.js';
+import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
 
 export class SampleScene extends Phaser.Scene {
     constructor() {
@@ -10,7 +10,7 @@ export class SampleScene extends Phaser.Scene {
     }
 
     preload() {
-        loadAssets(this);
+        loadPenguinsNGuns(this);
     }
 
     create() {

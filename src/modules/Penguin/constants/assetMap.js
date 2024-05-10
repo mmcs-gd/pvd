@@ -1,10 +1,9 @@
 import { importsToMap } from 'src/utils/resource-loaders/importsToMap.js';
 
-const bodiesPath = 'assets/bodies/';
-const gunsPath = 'assets/guns/';
+const bodiesPath = '/assets/sprites/pack/Characters/chickens/';
 
 /** @type {Record<string, string>} */
-const bodiesImports = import.meta.glob('assets/bodies/*.png', {
+const bodiesImports = import.meta.glob('/assets/sprites/pack/Characters/chickens/*.png', {
     eager: true,
     query: '?url',
     import: 'default',
