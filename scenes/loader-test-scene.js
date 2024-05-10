@@ -4,6 +4,7 @@ import { Penguin } from 'src/modules/Penguin/Penguin.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
 import { Gun } from 'src/modules/Gun/Gun.js';
+import { gunsDB } from 'src/resources/db/guns/index.js';
 
 class LoaderTestScene extends Phaser.Scene {
 
@@ -52,7 +53,7 @@ class LoaderTestScene extends Phaser.Scene {
         this.target = this.add.circle(0.5 * sceneCenter.x, sceneCenter.y, 5, 0xff0000);
 
         const gunConfig1 = new Gun({
-            'id': '9c3f7a68-9da2-4599-b0ae-f0bbd7e709f5',
+            id: '9c3f7a68-9da2-4599-b0ae-f0bbd7e709f5',
             name: 'BOOM-BOOM',
             assetKey: '7g',
             weaponType: 'Bomb',
