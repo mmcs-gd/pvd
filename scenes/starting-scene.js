@@ -10,8 +10,6 @@ import Gun from '../src/gun.js';
 //! TEST IMPORTS
 import penguinSpriteTest1 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 29.png';
 import penguinSpriteTest2 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 27.png';
-import gunSpriteTest1 from 'src/modules/Gun/assets/guns/4g.png';
-import gunSpriteTest2 from 'src/modules/Gun/assets/guns/6g.png';
 //! TEST IMPORTS END
 
 export default class StartingScene extends Phaser.Scene {
@@ -29,8 +27,8 @@ export default class StartingScene extends Phaser.Scene {
         //! TEST LOADS
         this.load.image('penguinSpriteTest1', penguinSpriteTest1);
         this.load.image('penguinSpriteTest2', penguinSpriteTest2);
-        this.load.image('gunSpriteTest1', gunSpriteTest1);
-        this.load.image('gunSpriteTest2', gunSpriteTest2);
+        this.load.image('gunSpriteTest1', '/sprites/pack/Characters/guns/4g.png?url');
+        this.load.image('gunSpriteTest2', '/sprites/pack/Characters/guns/6g.png?url');
         //! TEST LOADS END
         
         this.load.image('shopIcon', shopIcon);
