@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
-import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
-import { Penguin } from 'src/modules/Penguin/Penguin.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
-import { Gun } from 'src/modules/Gun/Gun.js';
 import { loadPenguinsNGunsFromDB } from 'src/utils/resource-loaders/load-penguins-n-guns-db.js';
 
 class LoaderTestScene extends Phaser.Scene {
@@ -15,17 +12,11 @@ class LoaderTestScene extends Phaser.Scene {
     preload () {
         loadPenguinsNGunsAssets(this);
         //loading map tiles and json with positions
-        this.load.image('tiles', '/tileset/Dungeon_Tileset.png?url');
-        this.load.tilemapTiledJSON('map', '/dungeon_room.json?url');
-
-        //loading sprite-sheets
-        // Load dog animations
-        DogAnimationLoader.preload('/sprites/pack/Characters/Dogs', this);
-
+        this.load.image('tiles', 'tileset/Dungeon_Tileset.png?url');
+        this.load.tilemapTiledJSON('map', 'dungeon_room.json?url');
     }
 
     create() {
-        DogAnimationLoader.create(this);
         this.gameObjects = [];
         const map = this.make.tilemap({key: 'map'});
 
