@@ -40,6 +40,8 @@ export class Penguin extends Phaser.GameObjects.Container {
     #gun;
     /** @type {Gun} */
     #gunConfig;
+    /** @type {Object} */
+    #stats;
 
     get isForwardOrientation() {
         return this.#orientation === 'forward';
@@ -50,12 +52,13 @@ export class Penguin extends Phaser.GameObjects.Container {
    * @param {number} x
    * @param {number} y
    * @param {Object} options
+   * @param {Object | undefined} options.stats // sorry!
    * @param {string} options.bodyKey
    * @param {Gun} options.gunConfig
    * @param {Target} [options.target]
    * @param {boolean} [options.faceToTarget=false]
    */
-    constructor(scene, x, y, { bodyKey, gunConfig, target, faceToTarget }) {
+    constructor(scene, x, y, { bodyKey, gunConfig, stats, target, faceToTarget }) {
         super(scene, x, y);
 
         if (!bodyKey || !bodiesMap[bodyKey]) {
@@ -63,6 +66,7 @@ export class Penguin extends Phaser.GameObjects.Container {
                 bodyKey ? `Body key ${bodyKey} not found` : 'Body key is required'
             );
         }
+        this.#stats = stats;
         this.#gunConfig = gunConfig;
         this.#target = target;
         this.#faceToTarget = !!faceToTarget;

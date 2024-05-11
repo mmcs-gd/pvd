@@ -32,6 +32,11 @@ const loadPenguinsNGunsFromDB = (
             gunConfig: gunsConfigs[penIdToGunId[id]],
             target,
             faceToTarget: true,
+            stats: Object.fromEntries(
+                Object.entries(penguinsConfigs[id]).filter(
+                    ([key, val]) => key !== 'id' && key !== 'assetKey'
+                )
+            ),
         })
     );
 };
