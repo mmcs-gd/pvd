@@ -5,11 +5,11 @@ import { PreloaderScene } from '../scenes/loading-scene.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: 70*32,
+    height: 35*32,
     pixelArt: false,
     zoom: 1.0,
-    scene: [PreloaderScene, MainMenuScene, BulletsDemoScene],
+    scene: [MainMenuScene, BulletsDemoScene],
     physics: {
         default: 'arcade',
         arcade: {
