@@ -16,7 +16,7 @@ const loadPenguinsNGunsFromDB = (
         gunsIds.map(id => [id, new Gun(gunsDB[id])])
     );
 
-    const penguinsIds = [...new Set(pairs.map((pair) => pair.penguinId))];
+    const penguinsIds = pairs.map((pair) => pair.penguinId);
     const penguinsConfigs = Object.fromEntries(
         penguinsIds.map(id => [id, penguinsDB[id]])
     );
