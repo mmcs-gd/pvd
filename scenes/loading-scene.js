@@ -140,7 +140,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     next() {
-        this.scene.switch('LoaderTestScene');
+        this.scene.start('LoaderTestScene');
     }
 
     get #nextBgColorIdx() {
