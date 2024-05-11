@@ -18,7 +18,7 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
     preload() {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
-        this.load.tilemapTiledJSON('map', 'dungeon_room.json');
+        this.load.tilemapTiledJSON('map', 'dungeon_room2.json');
 
         this.load.image('dog01', 'sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png');
 
@@ -31,9 +31,12 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
+        const belowFloor = map.createLayer('Ground', tileset, 0, 0);
         const belowLayer = map.createLayer('Floor', tileset, 0, 0);
         const worldLayer = map.createLayer('Walls', tileset, 0, 0);
+        const decals = map.createLayer('Decals', tileset, 0, 0);
         const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
+        const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
         this.tileSize = 32;
 
         worldLayer.setCollisionBetween(1, 500);
