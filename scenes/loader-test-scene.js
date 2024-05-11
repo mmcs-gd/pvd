@@ -2,9 +2,9 @@ import Phaser from 'phaser';
 import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
 import { Penguin } from 'src/modules/Penguin/Penguin.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
-import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
+import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
 import { Gun } from 'src/modules/Gun/Gun.js';
-import { gunsDB } from 'src/resources/db/guns/index.js';
+import { loadPenguinsNGunsFromDB } from 'src/utils/resource-loaders/load-penguins-n-guns-db.js';
 
 class LoaderTestScene extends Phaser.Scene {
 
@@ -13,7 +13,7 @@ class LoaderTestScene extends Phaser.Scene {
     }
 
     preload () {
-        loadPenguinsNGuns(this);
+        loadPenguinsNGunsAssets(this);
         //loading map tiles and json with positions
         this.load.image('tiles', '/tileset/Dungeon_Tileset.png?url');
         this.load.tilemapTiledJSON('map', '/dungeon_room.json?url');
@@ -50,9 +50,8 @@ class LoaderTestScene extends Phaser.Scene {
         const sceneCenter = {
             x: GAME_CONFIG.width / 2, y: GAME_CONFIG.height / 2
         };
-        this.target = this.add.circle(0.5 * sceneCenter.x, sceneCenter.y, 5, 0xff0000);
-
-        const gunConfig1 = new Gun({
+        this.target = this.add.circle(sceneCenter.x, sceneCenter.y, 5, 0xff0000);
+        /*        const gunConfig1 = new Gun({
             id: '9c3f7a68-9da2-4599-b0ae-f0bbd7e709f5',
             name: 'BOOM-BOOM',
             assetKey: '7g',
@@ -61,7 +60,6 @@ class LoaderTestScene extends Phaser.Scene {
             cost: 5000,
             range: 1
         });
-
         const penpen1 = new Penguin(this, sceneCenter.x, 0.5 * sceneCenter.y, {
             bodyKey: '2c',
             gunConfig: gunConfig1,
@@ -74,8 +72,17 @@ class LoaderTestScene extends Phaser.Scene {
             gunConfig: gunConfig1,
             target: this.target,
             faceToTarget: true,
+        });*/
+        const config = [{
+            penguinId: '28c10fd3-dfe5-4f4b-83dc-59bf7884a07b',
+            gunId: '8d17522e-2ab8-41d4-b953-931af837a86e'
+        }];
+        const penguins = loadPenguinsNGunsFromDB(config, {
+            scene: this,
+            target: this.target,
+            sceneCenter
         });
-        this.gameObjects.push(penpen1, penpen2);
+        this.gameObjects.push(...penguins);
 
         // Setup debug boundaries
         this.input.keyboard.on('keydown-D', event => {

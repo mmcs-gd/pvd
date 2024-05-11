@@ -1,7 +1,7 @@
 // @ts-check
 import Phaser from 'phaser';
 import { Penguin } from './Penguin.js';
-import { loadPenguinsNGuns } from 'src/utils/resource-loaders/load-penguins-n-guns.js';
+import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
@@ -22,7 +22,7 @@ export class SampleScene extends Phaser.Scene {
     }
 
     preload() {
-        loadPenguinsNGuns(this);
+        loadPenguinsNGunsAssets(this);
     }
 
     create() {
