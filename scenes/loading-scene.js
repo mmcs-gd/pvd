@@ -128,7 +128,7 @@ class PreloaderScene extends Phaser.Scene {
         this.#captions.push(text);
 
         if (this.#captions.length === 3) {
-            this.time.delayedCall(2000, this.clearCaptions, [], this);
+            this.time.delayedCall(2000, this.next, [], this);
         }
     }
 
@@ -137,6 +137,10 @@ class PreloaderScene extends Phaser.Scene {
             child.destroy();
         });
         this.#captions.length = 0;
+    }
+
+    next() {
+        this.scene.switch('LoaderTestScene');
     }
 
     get #nextBgColorIdx() {
