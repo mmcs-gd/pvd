@@ -28,8 +28,8 @@ export class MapGenManager2 {
             parts: [68, 69, 70, 84, 85, 86, 100, 101, 102, 116, 117, 118]
         },
         walls: {
-            w1: 161,
-            empty: 167, // inside walls
+            w1: 167,
+            // empty: 167, // inside walls
             zero: 15, // no walls
 
             top: 1,
@@ -44,6 +44,37 @@ export class MapGenManager2 {
             iru: 21,
             ilb: 37,
             irb: 35
+        },
+        upper: {
+            plate: 36,
+            u_plate: 52,
+
+            lu: 98,
+            lu2: 114,
+
+            ru: 97,
+            ru2: 113,
+
+            ilb: 37,
+            u_ilb: 53,
+
+            irb: 35,
+            u_irb: 51,
+
+            b_ilu: 64,
+            b_iru: 67,
+            b_b: 33,
+            b_lb: 32,
+            b_rb: 34
+        }, 
+        decals: {
+            traps: [243, 244, 245],
+            bones: [240, 241, 242, 258, 259, 274, 
+                261]
+        },
+        leaves: {
+            l1: [256, 272],
+            l2: [257, 273]
         }
     }
 
@@ -331,6 +362,18 @@ export class MapGenManager2 {
         // do holes
         connect_rooms_from(rooms[0])
 
+        // remove not connected rooms
+        for(const room of rooms) {
+            if(!room.connected){
+                for (let dy = 0; dy < room.height; dy++) {
+                    for (let dx = 0; dx < room.width; dx++) {
+                        _walls[room.y + dy][room.x + dx] = MapGenManager2.codes.walls.w1
+                    }
+                    
+                }
+            }
+        }
+
         // =================== PART 2
 
         function change_by_pred(predicate, value) {
@@ -342,35 +385,43 @@ export class MapGenManager2 {
         }
 
         function change_by_pred_border(predicate, value) {
-            for (let j = 0; j < _height; j++) if(predicate({x:0, y:j})) _walls[j][0] = value
-            for (let j = 0; j < _height; j++) if(predicate({x:_width-1, y:j})) _walls[j][_width-1] = value
-            for (let i = 0; i < _width; i++) if(predicate({x:i, y:0})) _walls[i][0] = value
-            for (let i = 0; i < _width; i++) if(predicate({x:i, y:_height-1})) _walls[i][_height-1] = value
+            for (let j = 1; j < _height; j++) if(predicate({x:0, y:j})) _walls[j][0] = value
+            for (let j = 1; j < _height; j++) if(predicate({x:_width-1, y:j})) _walls[j][_width-1] = value
+            for (let i = 0; i < _width; i++) if(predicate({x:i, y:1})) _walls[1][i] = value
+            for (let i = 0; i < _width; i++) if(predicate({x:i, y:_height-1})) _walls[_height-1][i] = value
+        }
+
+        function change_by_pred_border_top(predicate, value) {
+            for (let i = 0; i < _width; i++) if(predicate({x:i, y:1})) _walls[1][i] = value
         }
 
         // do zerowalls
-        change_by_pred(p => {
-            for(let dy = -1; dy <= 1; dy++){
-                for(let dx = -1; dx <= 1; dx++){
-                    if(_walls[p.y+dy][p.x+dx] == MapGenManager2.codes.walls.zero)
-                        return false
-                }    
-            }
-            return true
-        }, MapGenManager2.codes.walls.empty)
+        // change_by_pred(p => {
+        //     for(let dy = -1; dy <= 1; dy++){
+        //         for(let dx = -1; dx <= 1; dx++){
+        //             if(_walls[p.y+dy][p.x+dx] == MapGenManager2.codes.walls.zero)
+        //                 return false
+        //         }    
+        //     }
+        //     return true
+        // }, MapGenManager2.codes.walls.empty)
 
         // top walls
         change_by_pred(p => {
             return _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.zero &&
                 _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 && 
-                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.empty
+                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x - 1] != MapGenManager2.codes.walls.zero &&
+                _walls[p.y][p.x + 1] != MapGenManager2.codes.walls.zero
         }, MapGenManager2.codes.walls.top)
 
         // bottom walls
         change_by_pred(p => {
-            return _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.empty &&
+            return _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.w1 &&
                 _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 && 
-                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.zero
+                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.zero &&
+                _walls[p.y][p.x - 1] != MapGenManager2.codes.walls.zero &&
+                _walls[p.y][p.x + 1] != MapGenManager2.codes.walls.zero
         }, MapGenManager2.codes.walls.bottom)
 
         // left walls
@@ -439,24 +490,270 @@ export class MapGenManager2 {
                 _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.top
         }, MapGenManager2.codes.walls.ru)
 
+        // left border
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x + 1] == MapGenManager2.codes.walls.zero
+        }, MapGenManager2.codes.walls.right)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x + 1] == MapGenManager2.codes.walls.top
+        }, MapGenManager2.codes.walls.irb)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x + 1] == MapGenManager2.codes.walls.bottom
+        }, MapGenManager2.codes.walls.ilu)
+
+        // right border
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.zero
+        }, MapGenManager2.codes.walls.left)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.top
+        }, MapGenManager2.codes.walls.ilb)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.bottom
+        }, MapGenManager2.codes.walls.iru)
+
+        // bottom border
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.zero
+        }, MapGenManager2.codes.walls.top)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.walls.ilb)
+
+        change_by_pred_border(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.walls.irb)
+
+        // top border
+        change_by_pred_border_top(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.zero
+        }, MapGenManager2.codes.walls.bottom)
+
+        change_by_pred_border_top(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                (_walls[p.y + 1][p.x] == MapGenManager2.codes.walls.left || _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.lb)
+        }, MapGenManager2.codes.walls.iru)
+
+        change_by_pred_border_top(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.w1 &&
+                (_walls[p.y + 1][p.x] == MapGenManager2.codes.walls.right || _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.rb)
+        }, MapGenManager2.codes.walls.ilu)
+
         // console.log(_walls)
         // console.log(rooms)
         // console.log(walls)
     }
     gen_upper() {
+        const _walls = this.walls
+        const _width = this.width
+        const _height = this.height
+        const _upper = this.upper
+
         for (let j = 0; j < this.height; j++) {
             for (let i = 0; i < this.width; i++) {
-                this.upper[j][i] = 0
+                this.upper[j][i] = MapGenManager2.codes.walls.zero
             }
         }
+
+        function change_by_pred(predicate, value, d = [0, 0, 0, 0]) {
+            for (let j = 2 + d[0]; j < _height - 1 + d[1]; j++) {
+                for (let i = 1 + d[2]; i < _width - 1 + d[3]; i++) {
+                    if(predicate({x:i, y:j})) _upper[j][i] = value
+                }
+            }
+        }
+
+        // uniq cases
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.left &&
+                _walls[p.y + 1][p.x - 1] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.walls.ilb, [-1, 0, 0, 1])
+
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.left &&
+                _walls[p.y][p.x + 1] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.upper.lu, [-1, 0, -1, 0])
+
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.left &&
+                _walls[p.y - 1][p.x + 1] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.upper.lu2, [0, 1, -1, 0])
+
+        change_by_pred(p => {
+            return _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.left &&
+                _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.upper.u_ilb, [0, 1, 0, 1])
+
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.right &&
+                _walls[p.y + 1][p.x + 1] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.walls.irb, [-1, 0, -1, 0])
+
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.right &&
+                _walls[p.y][p.x - 1] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.upper.ru, [-1, 0, 0, 1])
+
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.right &&
+                _walls[p.y - 1][p.x - 1] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.upper.ru2, [0, 1, 0, 1])
+
+        change_by_pred(p => {
+            return _walls[p.y - 1][p.x] == MapGenManager2.codes.walls.left &&
+                _walls[p.y][p.x + 1] == MapGenManager2.codes.walls.left
+        }, MapGenManager2.codes.upper.u_irb, [0, 1, -1, 0])
+
+        // w-walls
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.zero &&
+                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.left && 
+                _walls[p.y + 1][p.x + 1] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.walls.lu, [-1, 0, -1, 0])
+
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.zero &&
+                _walls[p.y + 1][p.x - 1] == MapGenManager2.codes.walls.left && 
+                _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.right
+        }, MapGenManager2.codes.walls.ru, [-1, 0, 0, 1])
+
+        // left upper
+        change_by_pred(p => {
+            return _walls[p.y+1][p.x] == MapGenManager2.codes.walls.lu
+        }, MapGenManager2.codes.upper.lu, [-1, 0, -1, 1])
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.lu
+        }, MapGenManager2.codes.upper.lu2, [-1, 1, -1, 1])
+
+        // right upper
+        change_by_pred(p => {
+            return _walls[p.y+1][p.x] == MapGenManager2.codes.walls.ru
+        }, MapGenManager2.codes.upper.ru, [-1, 0, -1, 1])
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.ru
+        }, MapGenManager2.codes.upper.ru2, [-1, 1, -1, 1])
+
+        // upper
+        change_by_pred(p => {
+            return _walls[p.y+1][p.x] == MapGenManager2.codes.walls.top
+        }, MapGenManager2.codes.upper.plate, [-1, 0, -1, 1])
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.top
+        }, MapGenManager2.codes.upper.u_plate, [-1, 1, -1, 1])
+
+        // inner left bottom
+        change_by_pred(p => {
+            return _walls[p.y+1][p.x] == MapGenManager2.codes.upper.ilb
+        }, MapGenManager2.codes.upper.ilb, [-1, 0, -1, 1])
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.upper.ilb
+        }, MapGenManager2.codes.upper.u_ilb, [-1, 1, -1, 1])
+
+        // inner left bottom
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.upper.irb
+        }, MapGenManager2.codes.upper.irb, [-1, 0, -1, 1])
+        change_by_pred(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.upper.irb
+        }, MapGenManager2.codes.upper.u_irb, [-1, 1, -1, 1])
+
+        // top inner left
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.ilu
+        }, MapGenManager2.codes.upper.b_ilu, [-2, 0, -1, 1])
+
+        // top inner right
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.iru
+        }, MapGenManager2.codes.upper.b_iru, [-2, 0, -1, 1])
+
+        // top
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.bottom
+        }, MapGenManager2.codes.upper.b_b, [-2, 0, -1, 1])
+
+        // top left
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.lb
+        }, MapGenManager2.codes.upper.b_lb, [-2, 0, -1, 1])
+
+        // top right
+        change_by_pred(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.rb
+        }, MapGenManager2.codes.upper.b_rb, [-2, 0, -1, 1])
+
     }
     gen_other() {
+        const _walls = this.walls
+        const _width = this.width
+        const _height = this.height
+        const _decals = this.decals
+        const _leaves = this.leaves
+
         for (let j = 0; j < this.height; j++) {
             for (let i = 0; i < this.width; i++) {
-                this.decals[j][i] = 0
-                this.leaves[j][i] = 0
+                this.decals[j][i] = MapGenManager2.codes.walls.zero
+                this.leaves[j][i] = MapGenManager2.codes.walls.zero
             }
         }
+
+        function change_by_pred_decals(predicate, value, d = [0, 0, 0, 0]) {
+            for (let j = 2 + d[0]; j < _height - 1 + d[1]; j++) {
+                for (let i = 1 + d[2]; i < _width - 1 + d[3]; i++) {
+                    if(predicate({x:i, y:j})) _decals[j][i] = value.random()
+                }
+            }
+        }
+
+        function change_by_pred_leaves(predicate, value, d = [0, 0, 0, 0]) {
+            for (let j = 2 + d[0]; j < _height - 1 + d[1]; j++) {
+                for (let i = 1 + d[2]; i < _width - 1 + d[3]; i++) {
+                    if(predicate({x:i, y:j})){
+                        _leaves[j][i] = value[0]
+                        _leaves[j + 1][i] = value[1]
+                    }
+                }
+            }
+        }
+
+        // traps
+
+        change_by_pred_decals(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.zero && 
+                randInt(0, 100) < 18
+        }, MapGenManager2.codes.decals.traps)
+
+        change_by_pred_decals(p => {
+            return _walls[p.y][p.x] == MapGenManager2.codes.walls.zero && 
+                randInt(0, 100) < 5
+        }, MapGenManager2.codes.decals.bones)
+
+        // bones
+
+        change_by_pred_leaves(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.bottom && 
+                randInt(0, 100) < 5
+        }, MapGenManager2.codes.leaves.l1)
+
+        change_by_pred_leaves(p => {
+            return _walls[p.y + 1][p.x] == MapGenManager2.codes.walls.bottom && 
+                randInt(0, 100) < 5
+        }, MapGenManager2.codes.leaves.l2)
     }
 
     // async export_json() {

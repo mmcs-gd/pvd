@@ -25,17 +25,20 @@ export default class MapGen2DemoScene extends Phaser.Scene {
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
-        const belowFloor = map.createBlankLayer('Ground', tileset);
-        const belowLayer = map.createBlankLayer('Floor', tileset);
-        const worldLayer = map.createBlankLayer('Walls', tileset);
+        const ground = map.createBlankLayer('Ground', tileset);
+        const floor = map.createBlankLayer('Floor', tileset);
+        const walls = map.createBlankLayer('Walls', tileset);
+        const decals = map.createBlankLayer('Decals', tileset);
+        const upper = map.createBlankLayer('Upper', tileset);
+        const leaves = map.createBlankLayer('Leaves', tileset);
 
-        belowFloor.putTilesAt(this.genmap.ground, 0, 0)
-        belowLayer.putTilesAt(this.genmap.floor, 0, 0)
-        worldLayer.putTilesAt(this.genmap.walls, 0, 0)
-
-        // const decals = map.createLayer('Decals', tileset, 0, 0);
-        // const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
-        // const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
+        ground.putTilesAt(this.genmap.ground, 0, 0)
+        floor.putTilesAt(this.genmap.floor, 0, 0)
+        walls.putTilesAt(this.genmap.walls, 0, 0)
+        decals.putTilesAt(this.genmap.decals, 0, 0)
+        upper.putTilesAt(this.genmap.upper, 0, 0)
+        leaves.putTilesAt(this.genmap.leaves, 0, 0)
+        
         this.tileSize = 32;
 
         // worldLayer.setCollisionBetween(1, 500);
