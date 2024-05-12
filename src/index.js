@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import BulletsDemoScene from '../scenes/bullets-demo.js';
 import MainMenuScene from '../scenes/mainMenu-scene.js';
+import MapGen2DemoScene from '../scenes/mapgen2-demo.js'
 import { PreloaderScene } from '../scenes/loading-scene.js';
 
 const config = {
@@ -9,7 +10,7 @@ const config = {
     height: 35*32,
     pixelArt: false,
     zoom: 1.0,
-    scene: [MainMenuScene, BulletsDemoScene],
+    scene: [MapGen2DemoScene],
     physics: {
         default: 'arcade',
         arcade: {
