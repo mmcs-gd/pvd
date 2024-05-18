@@ -3,7 +3,7 @@ import BulletsDemoScene from '../scenes/bullets-demo.js';
 import MainMenuScene from '../scenes/mainMenu-scene.js';
 import { PreloaderScene } from '../scenes/loading-scene.js';
 import { LoaderTestScene } from '../scenes/loader-test-scene.js';
-import MapGen2DemoScene from '../scenes/mapgen2-demo.js'
+import MapGen2DemoScene from '../scenes/map-gen2-demo.js';
 // import StartingScene from '../scenes/starting-scene.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
