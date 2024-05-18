@@ -10,6 +10,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
     preload(){
+        console.log('hello');
         this.load.image('playButtonDefault', 'sprites/pack/UI/Free Upgrade Screen/Artboard 3_1.png');
         this.load.image('playButtonHover', 'sprites/pack/UI/Free Upgrade Screen/Artboard 3 copy.png');
         this.load.image('backgroundImage', 'sprites/pack/UI/Free Upgrade Screen/Artboard 2.png');
