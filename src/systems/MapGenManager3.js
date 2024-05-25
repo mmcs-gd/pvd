@@ -403,7 +403,10 @@ export class MapGenManager3 {
 
         // bottom walls
         change_by_pred(p => {
-            return _walls[p.y - 1][p.x] != MapGenManager3.codes.walls.zero &&
+            return (_walls[p.y - 1][p.x] != MapGenManager3.codes.walls.zero ||
+                p.y - 1 < 0
+            )
+                &&
                 _walls[p.y][p.x] != MapGenManager3.codes.walls.zero &&
                 _walls[p.y + 1][p.x] == MapGenManager3.codes.walls.zero &&
                 _walls[p.y][p.x - 1] != MapGenManager3.codes.walls.zero &&
@@ -715,11 +718,6 @@ export class MapGenManager3 {
 
         // traps
 
-        // change_by_pred_decals(p => {
-        //     return _walls[p.y][p.x] == MapGenManager3.codes.walls.zero &&
-        //         randInt(0, 100) < 18
-        // }, MapGenManager3.codes.decals.traps)
-
         change_by_pred_decals(p => {
             return _walls[p.y][p.x] == MapGenManager3.codes.walls.zero &&
                 Math.random() < 0.005
@@ -737,18 +735,4 @@ export class MapGenManager3 {
                 randInt(0, 100) < 5
         }, MapGenManager3.codes.leaves.l2)
     }
-
-    // async export_json() {
-    //     let template = (await (await fetch("gen_room_template.json")).text())
-    //     template = template.replace(/@width/g, this.width.toString())
-    //         .replace(/@height/g, this.height.toString())
-    //         .replace("@Ground", this.ground.toString())
-    //         .replace("@Floor", this.floor.toString())
-    //         .replace("@Walls", this.walls.toString())
-    //         .replace("@Decals", this.decals.toString())
-    //         .replace("@Upper", this.upper.toString())
-    //         .replace("@Leaves", this.leaves.toString())
-
-    //     return template
-    // }
 }
