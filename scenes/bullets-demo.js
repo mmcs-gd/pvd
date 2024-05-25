@@ -4,6 +4,7 @@ import { BulletsManager } from '../src/systems/BulletsManager.js';
 import dungeonRoomJson from '../assets/dungeon_room.json';
 import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
 import Idle_00 from './../assets/sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png';
+import { AudioManager, AudioType } from '../src/audio/audio-manager.js';
 
 // debug bullets params
 const bulletVelocity = 200;
@@ -18,6 +19,7 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'BulletsDemoScene' });
+        this.audio_manager = new AudioManager("../assets/", this);
     }
 
     preload() {
@@ -27,9 +29,12 @@ export default class BulletsDemoScene extends Phaser.Scene {
         this.load.image('dog01', Idle_00);
 
         BulletsManager.preload(this);
+        this.audio_manager.on_preload();
     }
 
     create() {
+        this.audio_manager.on_create();
+        this.audio_manager.setVolume(AudioType.SFX, 1);
         this.gameObjects = [];
         const map = this.make.tilemap({ key: 'map' });
 
@@ -89,7 +94,7 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
         if (this.reloadingTime < 0) {
             let randType = Math.random();
-
+            this.audio_manager.play("gunshot")
             BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
             BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
             BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
