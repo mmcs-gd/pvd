@@ -14,7 +14,7 @@ const config = {
     height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [PreloaderScene, LoaderTestScene, MapGen2DemoScene /* StartingScene, MainMenuScene, BulletsDemoScene */],
+    scene: [/*PreloaderScene, LoaderTestScene,*/ MapGen2DemoScene /* StartingScene, MainMenuScene, BulletsDemoScene */],
     physics: {
         default: 'arcade',
         arcade: {
