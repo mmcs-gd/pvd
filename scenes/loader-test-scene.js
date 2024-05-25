@@ -17,6 +17,7 @@ class LoaderTestScene extends Phaser.Scene {
     }
 
     create() {
+        console.log(LoaderTestScene);
         this.gameObjects = [];
         const map = this.make.tilemap({key: 'map'});
 

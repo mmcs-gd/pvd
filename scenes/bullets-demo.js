@@ -26,6 +26,7 @@ export default class BulletsDemoScene extends Phaser.Scene {
     }
 
     create() {
+        console.log('BulletsDemoScene');
         this.gameObjects = [];
         const map = this.make.tilemap({ key: 'map' });
 
