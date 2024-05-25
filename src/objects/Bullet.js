@@ -18,7 +18,7 @@ export default class Bullet {
      * @param {number[]} direction
      * @param {number} velocity
      * @param {number} distance
-     * @param {any[]} blockedLayers
+     * @param {Phaser.Types.Physics.Arcade.ArcadeColliderType[]} blockedLayers
      * @param {number} fallingSpeed speed of falling bullet at the end of life time
      * @param {number} depth
      */
@@ -43,8 +43,9 @@ export default class Bullet {
         const offsetY = (this.sprite.height - 2 * colliderRadius) / 2;
 
         this.scene.physics.add.existing(this.sprite);
-        this.sprite.body.setCircle(colliderRadius, - this.sprite.height / 2 + offsetY + Math.cos(this.sprite.rotation) * (this.sprite.width - colliderRadius), offsetY + Math.sin(this.sprite.rotation) * (this.sprite.width - colliderRadius));
-        this.sprite.body.collideWorldBounds = false;
+
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.sprite.body).setCircle(colliderRadius, - this.sprite.height / 2 + offsetY + Math.cos(this.sprite.rotation) * (this.sprite.width - colliderRadius), offsetY + Math.sin(this.sprite.rotation) * (this.sprite.width - colliderRadius));
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.sprite.body).collideWorldBounds = false;
 
         // set layers, which block with bullet
         blockedLayers.forEach(layer => {
@@ -73,17 +74,18 @@ export default class Bullet {
     }
 
     /**
-     * TODO: wtf are these?
-     * @param {any} self
-     * @param {any} other
+     * Call other object collision event and destroy self
+     * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} self
+     * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} other
      */
     onHit(self, other) {
-        self.destroyed = true;
+
+        /** @type {Bullet}*/ (/** @type {unknown}*/ (self)).destroyed = true;
         self.destroy(); //
 
         // Call onHit method of other object
         try {
-            other.onHit();
+            /** @type {Object}*/ (other).onHit();
         } catch (error) { /* empty */ }
     }
 }
