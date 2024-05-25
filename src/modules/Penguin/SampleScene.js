@@ -1,7 +1,8 @@
 // @ts-check
 import Phaser from 'phaser';
 import { Penguin } from './Penguin.js';
-import { loadAssets } from './utils/index.js';
+import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
+import { Gun } from 'src/modules/Gun/Gun.js';
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
@@ -22,40 +23,55 @@ export class SampleScene extends Phaser.Scene {
     }
 
     preload() {
-        loadAssets(this);
+        loadPenguinsNGunsAssets(this);
     }
 
     create() {
         this.target = this.add.circle(0, this.radius, 5, 0xff0000);
 
+        // todo: add repo method for pulling configs from db by id
+        const gunConfig = new Gun({
+            'id': '7b90d51a-13e6-4d5b-b1e6-af19a6c2e8d1',
+            'name': 'Red Banner Grandma\'s Machine Gun',
+            'assetKey': '9g',
+            'weaponType': 'Machine Gun',
+            'damage': 200,
+            'cost': 3000,
+            'range': 300
+        });
         this.penguins.push(
             new Penguin(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, {
                 bodyKey: '2c',
-                gunKey: '2g',
+                gunConfig,
+                stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
             new Penguin(this, 100, 100, {
                 bodyKey: '1c',
-                gunKey: '1g',
+                gunConfig,
+                stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
             new Penguin(this, GAME_WIDTH - 100, 100, {
                 bodyKey: '3c',
-                gunKey: '3g',
+                gunConfig,
+                stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
             new Penguin(this, 100, GAME_HEIGHT - 100, {
                 bodyKey: '4c',
-                gunKey: '4g',
+                gunConfig,
+                stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
             new Penguin(this, GAME_WIDTH - 100, GAME_HEIGHT - 100, {
                 bodyKey: '5c',
-                gunKey: '5g',
+                gunConfig,
+                stats: {},
                 target: this.target,
                 faceToTarget: true,
             })
@@ -79,5 +95,9 @@ export class SampleScene extends Phaser.Scene {
         this.target.y = y;
 
         this.penguins.forEach((penguin) => penguin.update(time, delta));
+
+        this.input.keyboard.on('keydown-SPACE', event => {
+            this.scene.start('MainMenuScene');
+        });
     }
 }

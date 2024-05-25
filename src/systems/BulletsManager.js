@@ -1,7 +1,4 @@
 import { Bullet } from '../objects/Bullet.js';
-import Bullets1 from './../../assets/sprites/pack/Bullets/Bullets1.png';
-import Bullets2 from './../../assets/sprites/pack/Bullets/Bullets2.png';
-import Bullets3 from './../../assets/sprites/pack/Bullets/Bullets3.png';
 
 export class BulletsManager {
     /**
@@ -9,9 +6,9 @@ export class BulletsManager {
      * @param {Phaser.Scene} scene
      */
     static preload(scene) {
-        scene.load.image('bullet1', Bullets1);
-        scene.load.image('bullet2', Bullets2);
-        scene.load.image('bullet3', Bullets3);
+        scene.load.image('bullet1', 'sprites/pack/Bullets/Bullets1.png');
+        scene.load.image('bullet2', 'sprites/pack/Bullets/Bullets2.png');
+        scene.load.image('bullet3', 'sprites/pack/Bullets/Bullets3.png');
     }
 
     /**

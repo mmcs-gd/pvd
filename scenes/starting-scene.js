@@ -1,7 +1,16 @@
 import Phaser from 'phaser';
-import tilemapPng from '../assets/tileset/Dungeon_Tileset.png';
 import dungeonRoomJson from '../assets/dungeon_room.json';
-import { DogAnimationLoader } from '../src/utils/DogAnimationLoader.js';
+import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
+import ShopWindow from '../src/UI/shop-window.js';
+import shopIcon from '../assets/sprites/pack/UI/Gameplay Screen/Artboard 10.png';
+import Inventory from '../src/inventory.js';
+import Penguin from '../src/penguin.js';
+import Gun from '../src/gun.js';
+
+//! TEST IMPORTS
+import penguinSpriteTest1 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 29.png';
+import penguinSpriteTest2 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 27.png';
+//! TEST IMPORTS END
 
 export default class StartingScene extends Phaser.Scene {
     /** @type {object[]} */ gameObjects;
@@ -11,12 +20,21 @@ export default class StartingScene extends Phaser.Scene {
     }
 
     preload() {
-
         // loading map tiles and json with positions
-        this.load.image('tiles', tilemapPng);
+        this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
         this.load.tilemapTiledJSON('map', dungeonRoomJson);
 
-        // loading sprite-sheets
+        //! TEST LOADS
+        this.load.image('penguinSpriteTest1', penguinSpriteTest1);
+        this.load.image('penguinSpriteTest2', penguinSpriteTest2);
+        this.load.image('gunSpriteTest1', '/sprites/pack/Characters/guns/4g.png?url');
+        this.load.image('gunSpriteTest2', '/sprites/pack/Characters/guns/6g.png?url');
+        //! TEST LOADS END
+        
+        this.load.image('shopIcon', shopIcon);
+        ShopWindow.preload(this, 'shop-window');
+
+        //loading sprite-sheets
         // Load dog animations
         DogAnimationLoader.preload('sprites/pack/Characters/Dogs', this);
 
@@ -24,7 +42,41 @@ export default class StartingScene extends Phaser.Scene {
 
     create() {
         DogAnimationLoader.create(this);
+
+
+        this.inventory = new Inventory(200);
+
+        let penguins = [];
+        penguins.push(new Penguin(10, 'Super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new Penguin(20, 'Super super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new Penguin(5, 'Default penguin', 'penguinSpriteTest2'));
+        penguins.push(new Penguin(300, 'Mega ultra penguin', 'penguinSpriteTest2'));
+        penguins.push(new Penguin(150, 'Super half mega ultra penguin', 'penguinSpriteTest2'));
+
+        let guns = [];
+        guns.push(new Gun(50, 'Mega gun', 'gunSpriteTest1'));
+        guns.push(new Gun(100, 'Ultra mega gun', 'gunSpriteTest2'));
+
+        let shopButtonSize = 80;
+        this.openPenguinShopButton = this.add.image(shopButtonSize * 0.5, shopButtonSize * 0.5, 'shopIcon').setInteractive();
+        this.openPenguinShopButton.setDisplaySize(shopButtonSize, shopButtonSize);
+        this.openPenguinShopButton.setDepth(19);
+
+        this.openGunShopButton = this.add.image(shopButtonSize * 0.5, shopButtonSize * 1.5, 'shopIcon').setInteractive();
+        this.openGunShopButton.setDisplaySize(shopButtonSize, shopButtonSize);
+        this.openGunShopButton.setDepth(19);
+
+        // Create function called inside constructor
+        this.penguinShopWindow = new ShopWindow(this, this.openPenguinShopButton, penguins, this.inventory, this.inventory.penguins);
+        this.gunShopWindow = new ShopWindow(this, this.openGunShopButton, guns, this.inventory, this.inventory.guns);
+
+        this.cameras.main.on('cameramove', (camera, progress, oldPosition, newPosition) => {
+            this.openPenguinShopButton.setPosition(0, 0);
+            this.openGunShopButton.setPosition(0, 0);
+        });
+        
         this.gameObjects = [];
+
         const map = this.make.tilemap({ key: 'map' });
 
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
