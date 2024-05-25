@@ -112,10 +112,9 @@ class LoaderTestScene extends Phaser.Scene {
             });
         }
 
-    }
-
-    tilesToPixels(tileX, tileY) {
-        return [tileX * this.tileSize, tileY * this.tileSize];
+        this.input.keyboard.on('keydown-SPACE', event => {
+            this.scene.start('PenguinSampleScene');
+        });
     }
 }
 

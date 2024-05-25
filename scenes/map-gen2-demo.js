@@ -10,13 +10,13 @@ const height = 35;
 
 
 export default class MapGen2DemoScene extends Phaser.Scene {
+    /** @type {MapGenManager2 | null} */ genMap;
     /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
 
     constructor() {
         super({ key: 'MapGen2DemoScene' });
+        this.genMap = null;
     }
-
-    genmap = null
 
     preload() {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
@@ -48,13 +48,15 @@ export default class MapGen2DemoScene extends Phaser.Scene {
         const upper = map.createBlankLayer('Upper', tileset);
         const leaves = map.createBlankLayer('Leaves', tileset);
 
-        ground.putTilesAt(this.genmap.ground, 0, 0)
-        floor.putTilesAt(this.genmap.floor, 0, 0)
-        walls.putTilesAt(this.genmap.walls, 0, 0)
-        decals.putTilesAt(this.genmap.decals, 0, 0)
-        upper.putTilesAt(this.genmap.upper, 0, 0)
-        leaves.putTilesAt(this.genmap.leaves, 0, 0)
-        
+        ground.putTilesAt(this.genMap.ground, 0, 0);
+        floor.putTilesAt(this.genMap.floor, 0, 0);
+        walls.putTilesAt(this.genMap.walls, 0, 0);
+        decals.putTilesAt(this.genMap.decals, 0, 0);
+        upper.putTilesAt(this.genMap.upper, 0, 0);
+        leaves.putTilesAt(this.genMap.leaves, 0, 0);
+
+        this.tileSize = 32;
+
         // worldLayer.setCollisionBetween(1, 500);
         // aboveLayer.setDepth(10);
 
