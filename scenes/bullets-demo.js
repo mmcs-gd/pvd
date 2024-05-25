@@ -14,7 +14,7 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'BulletsDemoScene' });
-        this.audio_manager = new AudioManager("../assets/", this);
+        this.audio_manager = new AudioManager("../assets", this);
     }
 
     preload() {
