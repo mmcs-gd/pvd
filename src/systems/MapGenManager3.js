@@ -84,9 +84,6 @@ export class MapGenManager3 {
         this.width = Math.max(width, 5)
         this.height = Math.max(height, 6)
 
-        this.minDoorSize = 1;
-        this.maxDoorSize = 4;
-
         this.gen()
     }
 
@@ -109,7 +106,6 @@ export class MapGenManager3 {
         // ground & floor
         this.gen_bottom()
         this.generateBinaryMap()
-        //this.gen_walls()
         this.walls = this.binaryMap
         this.fixTileset();
         this.gen_upper()
@@ -120,6 +116,7 @@ export class MapGenManager3 {
     generateBinaryMap() {
         this.binaryMap = [];
         this.placedRooms = [];
+        this.jointRoomPairs = [];
         this.maxRooms = 15;
         this.initBinaryMap();
         this.generateInitialRoom();
@@ -169,7 +166,7 @@ export class MapGenManager3 {
         this.placedRooms.push(adjacent);
         this.carveRoom(adjacent);
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.8) {
             this.expandRoom(adjacent);
         }
 
@@ -178,12 +175,13 @@ export class MapGenManager3 {
 
     expandRoom(baseRoom) {
         let tries = 0;
-        let maxTries = 100;
+        let maxTries = 300;
         while (this.placedRooms.length < this.maxRooms && tries < maxTries) {
             let newRoom = this.generateAdjacentRoom(baseRoom, true);
             if (newRoom) {
                 this.placedRooms.push(newRoom);
                 this.carveRoom(newRoom);
+                this.jointRoomPairs.push([this.placedRooms.indexOf(baseRoom), this.placedRooms.length - 1]);
                 return;
             }
             tries++;
@@ -204,6 +202,14 @@ export class MapGenManager3 {
             height: roomHeight
         };
 
+        // fix dimension mismatch equal to 1, which corrupts the tilemap
+        if (direction == 0 || direction == 2) {
+            newRoom.width += Math.abs(baseRoom.x + baseRoom.width - (newRoom.x + newRoom.width)) % 2
+        }
+        if (direction == 1 || direction == 3) {
+            newRoom.height += Math.abs(baseRoom.y + baseRoom.height - (newRoom.y + newRoom.height)) % 2
+        }
+
         let touchingRoom = touching ? baseRoom : null;
 
         if (this.isValidRoomPosition(newRoom, touchingRoom)) {
@@ -219,7 +225,7 @@ export class MapGenManager3 {
         }
 
         for (let other of this.placedRooms) {
-            let extraDistance = + (!(touchingRoom == other)) * 2;
+            let extraDistance = + (touchingRoom != other) * 2;
             if (!(room.x + room.width + extraDistance <= other.x ||
                 room.x >= other.x + other.width + extraDistance ||
                 room.y + room.height + extraDistance <= other.y ||
@@ -241,23 +247,78 @@ export class MapGenManager3 {
 
     joinAllRooms() {
         this.connectedSets = new DisjointSet(this.placedRooms.length);
+        for (let x of this.jointRoomPairs) {
+            this.connectedSets.union(x[0], x[1]);
+        }
+
+        let touchingPairs = [];
+        let nonTouchingPairs = [];
+
+        // Determine if rooms are touching or not and categorize them accordingly
         for (let i = 0; i < this.placedRooms.length; i++) {
             for (let j = i + 1; j < this.placedRooms.length; j++) {
-                if (!this.connectedSets.connected(i, j)) {
-                    this.joinRooms(this.placedRooms[i], this.placedRooms[j]);
-                    this.connectedSets.union(i, j);
+                if (this.areRoomsTouching(this.placedRooms[i], this.placedRooms[j])) {
+                    touchingPairs.push([i, j]);
+                } else {
+                    nonTouchingPairs.push([i, j]);
                 }
+            }
+        }
+
+        // Join all touching rooms first
+        for (let [i, j] of touchingPairs) {
+            if (!this.connectedSets.connected(i, j)) {
+                this.joinRooms(this.placedRooms[i], this.placedRooms[j]);
+                this.connectedSets.union(i, j);
+            }
+        }
+
+        // Then join non-touching rooms
+        for (let [i, j] of nonTouchingPairs) {
+            if (!this.connectedSets.connected(i, j)) {
+                this.joinRooms(this.placedRooms[i], this.placedRooms[j]);
+                this.connectedSets.union(i, j);
             }
         }
     }
 
+    areRoomsTouching(roomA, roomB) {
+        const touchingHorizontally = Math.abs((roomA.x + roomA.width) - roomB.x) <= 2 || Math.abs((roomB.x + roomB.width) - roomA.x) <= 2;
+        const verticalIntersection = this.calcIntersectionAxis(roomA, roomB, 'y')
+        const touchingVertically = Math.abs((roomA.y + roomA.height) - roomB.y) <= 2 || Math.abs((roomB.y + roomB.height) - roomA.y) <= 2;
+        const horizontalIntersection = this.calcIntersectionAxis(roomA, roomB, 'x')
+        return (touchingHorizontally && verticalIntersection >= 2) || (touchingVertically && horizontalIntersection >= 2);
+    }
+
+    calcIntersectionAxis(firstRect, secondRect, axis) {
+        if (axis !== 'x' && axis !== 'y') {
+            return 0; // Invalid axis, return no intersection
+        }
+
+        // Determine the start and end points of the rectangles on the specified axis
+        let startFirst = firstRect[axis];
+        let endFirst = firstRect[axis] + (axis === 'x' ? firstRect.width : firstRect.height);
+        let startSecond = secondRect[axis];
+        let endSecond = secondRect[axis] + (axis === 'x' ? secondRect.width : secondRect.height);
+
+        // Calculate intersection length
+        let maxStart = Math.max(startFirst, startSecond);
+        let minEnd = Math.min(endFirst, endSecond);
+        let intersection = Math.max(0, minEnd - maxStart);
+
+        return intersection;
+    }
+
     joinRooms(roomA, roomB) {
-        let startPoint = { x: roomA.x + Math.floor(roomA.width / 2), y: roomA.y + Math.floor(roomA.height / 2) };
-        let endPoint = { x: roomB.x + Math.floor(roomB.width / 2), y: roomB.y + Math.floor(roomB.height / 2) };
+        let startPoint = { x: roomA.x + Math.floor(roomA.width / 2) - 1, y: roomA.y + Math.floor(roomA.height / 2) - 1 };
+        let endPoint = { x: roomB.x + Math.floor(roomB.width / 2) - 1, y: roomB.y + Math.floor(roomB.height / 2) - 1 };
 
         let currentPoint = { ...startPoint };
         let nextStepX = (currentPoint.x < endPoint.x) ? 1 : -1;
         let nextStepY = (currentPoint.y < endPoint.y) ? 1 : -1;
+
+        // Correct the path before the corner to ensure the 2x2 structure
+        let fixCorner = true;
 
         while (currentPoint.x !== endPoint.x) {
             for (let dx = 0; dx < 2; dx++) {
@@ -268,6 +329,15 @@ export class MapGenManager3 {
                 }
             }
             currentPoint.x += nextStepX;
+
+            // Fix for corner issue - adjust y position before the loop exits
+            if (fixCorner && currentPoint.x + nextStepX === endPoint.x) {
+                for (let dy = 0; dy < 2; dy++) {
+                    let doorY = currentPoint.y + dy * nextStepY;
+                    this.binaryMap[doorY][currentPoint.x + (1 * nextStepX)] = MapGenManager3.codes.walls.zero;
+                }
+                fixCorner = false; // Prevent further corner fixing
+            }
         }
 
         while (currentPoint.y !== endPoint.y) {
@@ -299,255 +369,6 @@ export class MapGenManager3 {
         }
     }
 
-    gen_walls() {
-        const _walls = this.walls
-        const _width = this.width
-        const _height = this.height
-
-        function is_valid(y, x) {
-            return y >= 0 && y < _height && x >= 0 && x < _width
-        }
-
-        function is_border(y, x) {
-            return y < 2 || y + 1 == _height || x < 1 || x + 1 == _width
-        }
-
-        for (let j = 0; j < _height; j++) {
-            for (let i = 0; i < _width; i++) {
-                _walls[j][i] = is_border(j, i) ? MapGenManager3.codes.walls.w1 : MapGenManager3.codes.walls.zero
-            }
-        }
-
-        const rooms = []
-        const walls = []
-
-        function is_inside(obj, p) {
-            return p.x >= obj.x &&
-                p.y >= obj.y &&
-                p.x < (obj.x + obj.width) &&
-                p.y < (obj.y + obj.height)
-        }
-
-        function check_room_from(y, x) {
-            for (const room of rooms) {
-                if (is_inside(room, { x: x, y: y }))
-                    return {
-                        is_possible: false,
-                        is_busy: true,
-                        dx: room.width + 2
-                    }
-            }
-
-            const ret = {
-                size: {
-                    width: 0,
-                    height: 0,
-                },
-                is_possible: true
-            }
-
-            let i;
-            for (i = x; _walls[y][i] == MapGenManager3.codes.walls.zero; i++);
-            ret.size.width = i - x;
-            if (ret.size.width < 3) return { is_possible: false, is_busy: false }
-
-            for (i = y; _walls[i][x] == MapGenManager3.codes.walls.zero; i++);
-            ret.size.height = i - y;
-            if (ret.size.height < 3) return { is_possible: false, is_busy: false }
-
-            return ret;
-        }
-
-        function add_room(y, x, size) {
-            rooms.push({
-                x: x,
-                y: y,
-                width: randInt(3, Math.max(size.width / 2, 3)),
-                height: randInt(3, Math.max(size.height / 2, 3)),
-                connected: false
-            })
-        }
-
-        function gen_local_walls(room) {
-            // for (let j = room.y; j < room.height + 3; j++) {
-            //     for (let i = room.x - 2; i < room.width + 2; i++) {
-            //         if(!is_inside(room, {x:i, y:j})) _walls[j][i] = MapGenManager3.codes.walls.w1
-            //     }
-            // }
-
-            // bottom
-            for (let dy = room.height; dy < room.height + 3; dy++) {
-                for (let dx = -2; dx < room.width + 2; dx++) {
-                    if (is_valid(room.y + dy, room.x + dx)) {
-                        _walls[room.y + dy][room.x + dx] = MapGenManager3.codes.walls.w1
-                    }
-                }
-            }
-
-            // left
-            for (let dx = -2; dx < 0; dx++) {
-                for (let dy = 0; dy < room.height; dy++) {
-                    if (is_valid(room.y + dy, room.x + dx)) {
-                        _walls[room.y + dy][room.x + dx] = MapGenManager3.codes.walls.w1
-                    }
-                }
-            }
-
-            // right
-            for (let dx = room.width; dx < room.width + 2; dx++) {
-                for (let dy = 0; dy < room.height; dy++) {
-                    if (is_valid(room.y + dy, room.x + dx)) {
-                        _walls[room.y + dy][room.x + dx] = MapGenManager3.codes.walls.w1
-                    }
-                }
-            }
-        }
-
-        // gen rooms
-        for (let j = 2; j < _height - 1; j++) {
-            for (let i = 1; i < _width - 1; i++) {
-                // _walls[j][i]
-                const temp = check_room_from(j, i)
-                if (temp.is_possible) {
-                    add_room(j, i, temp.size)
-                    // @ts-ignore
-                    gen_local_walls(rooms.last())
-                } else if (temp.is_busy) {
-                    // i += (temp.dx - 1)
-                } else {
-                    _walls[j][i] = MapGenManager3.codes.walls.w1
-                }
-            }
-        }
-
-        function find_room(p) {
-            for (const room of rooms) {
-                if (is_inside(room, p)) {
-                    return room
-                }
-            }
-        }
-
-        function check_wall_from(y, x) {
-            if (_walls[y][x] == MapGenManager3.codes.walls.zero || y + 3 >= _height || x + 2 >= _width) return { is_wall: false }
-
-            for (const wall of walls) {
-                if (is_inside(wall, { x: x, y: y }))
-                    return { is_wall: false }
-            }
-
-            let dy
-            for (dy = 0;
-                _walls[y + dy][x - 1] == MapGenManager3.codes.walls.zero &&
-                _walls[y + dy][x + 0] == MapGenManager3.codes.walls.w1 &&
-                _walls[y + dy][x + 1] == MapGenManager3.codes.walls.w1 &&
-                _walls[y + dy][x + 2] == MapGenManager3.codes.walls.zero; dy++);
-
-            // vertical
-            if (dy >= 2) {
-                return {
-                    is_wall: true,
-                    width: 2,
-                    height: dy,
-                    is_vert: true,
-                    rooms: [find_room({ y: y, x: x - 1 }), find_room({ y: y, x: x + 2 })]
-                }
-            }
-
-            let dx
-            for (dx = 0;
-                _walls[y - 1][x + dx] == MapGenManager3.codes.walls.zero &&
-                _walls[y + 0][x + dx] == MapGenManager3.codes.walls.w1 &&
-                _walls[y + 1][x + dx] == MapGenManager3.codes.walls.w1 &&
-                _walls[y + 2][x + dx] == MapGenManager3.codes.walls.w1 &&
-                _walls[y + 3][x + dx] == MapGenManager3.codes.walls.zero; dx++);
-
-            // horizontal
-            if (dx >= 2) {
-                return {
-                    is_wall: true,
-                    width: dx,
-                    height: 3,
-                    is_vert: false,
-                    rooms: [find_room({ y: y - 1, x: x }), find_room({ y: y + 3, x: x })]
-                }
-            }
-
-            return { is_wall: false }
-        }
-
-        function do_hole(wall) {
-            if (wall.is_vert) {
-                let j = 0, maxJ = wall.height
-                if (wall.height > 3) {
-                    j = randInt(0, 2) ? 0 : (maxJ - 2)
-                    maxJ = j + 2
-                }
-                for (; j < maxJ; j++) {
-                    for (let i = 0; i < wall.width; i++) {
-                        _walls[wall.y + j][wall.x + i] = MapGenManager3.codes.walls.zero
-                    }
-                }
-            } else {
-                let i = 0, maxI = wall.width
-                if (wall.width > 3) {
-                    i = randInt(0, 2) ? 0 : (maxI - 2)
-                    maxI = i + 2
-                }
-                for (; i < maxI; i++) {
-                    for (let j = 0; j < wall.height; j++) {
-                        _walls[wall.y + j][wall.x + i] = MapGenManager3.codes.walls.zero
-                    }
-                }
-            }
-        }
-
-        function connect_rooms_from(room) {
-            room.connected = true
-            for (const wall of walls) {
-                if (wall.rooms[0] == room && !wall.rooms[1].connected) {
-                    connect_rooms_from(wall.rooms[1])
-                    do_hole(wall)
-                } else if (wall.rooms[1] == room && !wall.rooms[0].connected) {
-                    connect_rooms_from(wall.rooms[0])
-                    do_hole(wall)
-                }
-            }
-        }
-
-        // find walls
-        for (let j = 2; j < _height - 1; j++) {
-            for (let i = 1; i < _width - 1; i++) {
-                const temp = check_wall_from(j, i)
-                if (temp.is_wall) {
-                    walls.push({
-                        x: i,
-                        y: j,
-                        width: temp.width,
-                        height: temp.height,
-                        is_vert: temp.is_vert,
-                        rooms: temp.rooms
-                    })
-                }
-            }
-        }
-
-        // do holes
-        connect_rooms_from(rooms[0])
-
-        // remove not connected rooms
-        for (const room of rooms) {
-            if (!room.connected) {
-                for (let dy = 0; dy < room.height; dy++) {
-                    for (let dx = 0; dx < room.width; dx++) {
-                        _walls[room.y + dy][room.x + dx] = MapGenManager3.codes.walls.w1
-                    }
-
-                }
-            }
-        }
-    }
-
     fixTileset() {
         const _walls = this.walls
         const _width = this.width
@@ -570,17 +391,6 @@ export class MapGenManager3 {
         function change_by_pred_border_top(predicate, value) {
             for (let i = 0; i < _width; i++) if (predicate({ x: i, y: 1 })) _walls[1][i] = value
         }
-
-        // do zerowalls
-        // change_by_pred(p => {
-        //     for(let dy = -1; dy <= 1; dy++){
-        //         for(let dx = -1; dx <= 1; dx++){
-        //             if(_walls[p.y+dy][p.x+dx] == MapGenManager3.codes.walls.zero)
-        //                 return false
-        //         }    
-        //     }
-        //     return true
-        // }, MapGenManager3.codes.walls.empty)
 
         // top walls
         change_by_pred(p => {
