@@ -1,13 +1,35 @@
-class Bullet {
-    // fallingSpeed - speed of falling bullet at the end of life time
-    constructor(scene, sprite = "bullet1", location = [400, 300], scale = 1, direction = [-1, 1], velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0) {
+import Phaser from 'phaser';
+
+export default class Bullet {
+    /** @type {Phaser.Scene} */              scene;
+    /** @type {number} */                    scale;
+    /** @type {number} */                    distance;
+    /** @type {boolean} */                   destroyed;
+    /** @type {number} */                    velocity;
+    /** @type {Phaser.GameObjects.Sprite} */ sprite;
+    /** @type {number} */                    fallingSpeed;
+    /** @type {number} */                    depth;
+
+    /**
+     * @param {Phaser.Scene} scene
+     * @param {string} sprite
+     * @param {number[]} location
+     * @param {number} scale
+     * @param {number[]} direction
+     * @param {number} velocity
+     * @param {number} distance
+     * @param {Phaser.Types.Physics.Arcade.ArcadeColliderType[]} blockedLayers
+     * @param {number} fallingSpeed speed of falling bullet at the end of life time
+     * @param {number} depth
+     */
+    constructor(scene, sprite = 'bullet1', location = [400, 300], scale = 1, direction = [-1, 1], velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0) {
         this.scene = scene;
         this.scale = scale;
         this.distance = distance;
         this.fallingSpeed = fallingSpeed;
         this.velocity = velocity;
 
-        this.sprite = scene.add.sprite(...location, sprite);
+        this.sprite = scene.add.sprite(location[0], location[1], sprite);
         this.sprite.setDepth(depth);
         this.sprite.setOrigin(0, 0.5);
         this.sprite.rotation = Phaser.Math.Angle.Between(0, 0, direction[0], direction[1]); // rotated bullet to direction vector
@@ -21,8 +43,9 @@ class Bullet {
         const offsetY = (this.sprite.height - 2 * colliderRadius) / 2;
 
         this.scene.physics.add.existing(this.sprite);
-        this.sprite.body.setCircle(colliderRadius, - this.sprite.height / 2 + offsetY + Math.cos(this.sprite.rotation) * (this.sprite.width - colliderRadius), offsetY + Math.sin(this.sprite.rotation) * (this.sprite.width - colliderRadius));
-        this.sprite.body.collideWorldBounds = false;
+
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.sprite.body).setCircle(colliderRadius, - this.sprite.height / 2 + offsetY + Math.cos(this.sprite.rotation) * (this.sprite.width - colliderRadius), offsetY + Math.sin(this.sprite.rotation) * (this.sprite.width - colliderRadius));
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.sprite.body).collideWorldBounds = false;
 
         // set layers, which block with bullet
         blockedLayers.forEach(layer => {
@@ -30,7 +53,10 @@ class Bullet {
         });
     }
 
-    // please, I need your delta time 
+    /**
+     * Please, I need your delta time
+     * @param {number} deltaTime
+     */
     update(deltaTime) {
         this.distance -= this.velocity * deltaTime;
 
@@ -47,21 +73,28 @@ class Bullet {
         }
     }
 
+    /**
+     * Call other object collision event and destroy self
+     * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} self
+     * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} other
+     */
     onHit(self, other) {
-        self.destroyed = true;
-        self.destroy();
+
+        /** @type {Bullet}*/ (/** @type {unknown}*/ (self)).destroyed = true;
+        self.destroy(); //
 
         // Call onHit method of other object
         try {
-            other.onHit();
-        } catch (error) {
-
-        }
+            /** @type {Object}*/ (other).onHit();
+        } catch (error) { /* empty */ }
     }
 }
 
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ */
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
-
-export { Bullet }
