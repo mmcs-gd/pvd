@@ -104,6 +104,7 @@ export class Penguin extends Phaser.GameObjects.Container {
             : 0;
 
         this.#gun.rotation = rotation;
+        this.#gunConfig.update(delta);
 
         this.setOrientation(
             !this.#target || this.#penguinBody.getBounds().centerX < this.#target.x
@@ -158,4 +159,29 @@ export class Penguin extends Phaser.GameObjects.Container {
         );
         this.#gun.setScale(1, this.isForwardOrientation ? 1 : -1);
     };
+
+    /**
+     * Shoot or other action of gun
+     */
+    useGun = () => {
+        const offsetX = this.#gunConfig.muzzlePosition.x;
+        const offsetY = this.isForwardOrientation ? -this.#gunConfig.muzzlePosition.y : this.#gunConfig.muzzlePosition.y;
+
+        const bulletRotation = this.#gun.rotation;
+
+        const cosRotation = Math.cos(bulletRotation);
+        const sinRotation = Math.sin(bulletRotation);
+
+        const bulletX = this.x + PENGUIN_BELLY_BUTTON_POSITION.x + (offsetX * cosRotation - offsetY * sinRotation);
+        const bulletY = this.y + PENGUIN_BELLY_BUTTON_POSITION.y + (offsetX * sinRotation + offsetY * cosRotation);
+
+        this.#gunConfig.shoot([bulletX, bulletY], bulletRotation);
+    }
+
+    /**
+     * Reload gun
+     */
+    reloadGun = () => {
+        this.#gunConfig.reload();
+    }
 }
