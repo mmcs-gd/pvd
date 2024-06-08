@@ -1,7 +1,7 @@
 import { ParticleAsset } from './particleAsset.js';
 
 export class ParticleGunFire extends ParticleAsset {
-    
+
     constructor() {
         super();
         // Frames for the animation
@@ -22,14 +22,10 @@ export class ParticleGunFire extends ParticleAsset {
     }
 
     /**
-     * Create a particle
+     * Preload assets required for the particle if required
      * @param {Phaser.Scene} scene 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} rotation 
-     * @param {number} scale 
      */
-    create(scene, x, y, rotation, scale) {
+    init(scene) {
         // Creating the animation after ensuring that all frames are loaded
         scene.anims.create({
             key: 'Fx02',
@@ -38,7 +34,17 @@ export class ParticleGunFire extends ParticleAsset {
             repeat: 0,
             hideOnComplete: true
         });
+    }
 
+    /**
+     * Create a particle
+     * @param {Phaser.Scene} scene 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} rotation 
+     * @param {number} scale 
+     */
+    create(scene, x, y, rotation, scale) {
         const sprite = scene.add.sprite(x, y, 'Fx02_00');
         sprite.scale = scale;
         sprite.rotation = rotation;

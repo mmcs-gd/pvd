@@ -1,6 +1,6 @@
 import { ParticleAsset } from './particleAsset.js';
 
-export class ParticleHitWall extends ParticleAsset {
+export class ParticleGunCocking extends ParticleAsset {
     
     constructor() {
         super();
@@ -12,7 +12,7 @@ export class ParticleHitWall extends ParticleAsset {
      * @param {Phaser.Scene} scene 
      */
     preload(scene) {
-        scene.load.audio('hit_wall', 'sfx/wall-hit.mp3');
+        scene.load.audio('gun_cocking', 'sfx/gun-cocking.mp3');
     }
 
     /**
@@ -20,7 +20,7 @@ export class ParticleHitWall extends ParticleAsset {
      * @param {Phaser.Scene} scene 
      */
     init(scene) {
-
+        
     }
 
     /**
@@ -32,7 +32,7 @@ export class ParticleHitWall extends ParticleAsset {
      * @param {number} scale 
      */
     create(scene, x, y, rotation, scale) {
-        scene.sound.play('hit_wall');
+        scene.sound.play('gun_cocking');
     }
 
     /**

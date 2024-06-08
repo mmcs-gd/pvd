@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { BulletsManager } from '../src/systems/BulletsManager.js';
+import { ParticlesSystem } from '../src/systems/ParticleSystem.js';
+import { ParticleHitWall } from '../src/vfx/particleHitWall.js';
 
 // debug bullets params
 const bulletVelocity = 200;
@@ -23,6 +25,13 @@ export default class BulletsDemoScene extends Phaser.Scene {
         this.load.image('dog01', 'sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png');
 
         BulletsManager.preload(this);
+
+        ParticlesSystem.preload(
+            this,
+            {
+                'HitWall': new ParticleHitWall(),
+            }
+        );
     }
 
     create() {
@@ -90,15 +99,15 @@ export default class BulletsDemoScene extends Phaser.Scene {
         if (this.reloadingTime < 0) {
             let randType = Math.random();
 
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, 0, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI / 2, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -Math.PI / 2, bulletVelocity, maxBulletDistance, fallingSpeed);
 
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -3 * Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, 3 * Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
 
             this.reloadingTime = shootingFreq;
         }

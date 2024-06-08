@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ParticlesSystem } from 'src/systems/ParticleSystem.js';
 
 export default class Bullet {
     /** @type {Phaser.Scene} */              scene;
@@ -15,14 +16,13 @@ export default class Bullet {
      * @param {string} sprite
      * @param {number[]} location
      * @param {number} scale
-     * @param {number[]} direction
      * @param {number} velocity
      * @param {number} distance
      * @param {Phaser.Types.Physics.Arcade.ArcadeColliderType[]} blockedLayers
      * @param {number} fallingSpeed speed of falling bullet at the end of life time
      * @param {number} depth
      */
-    constructor(scene, sprite = 'bullet1', location = [400, 300], scale = 1, direction = [-1, 1], velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0) {
+    constructor(scene, sprite = 'bullet1', location = [400, 300], scale = 1, rotation = 0, velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0) {
         this.scene = scene;
         this.scale = scale;
         this.distance = distance;
@@ -32,7 +32,7 @@ export default class Bullet {
         this.sprite = scene.add.sprite(location[0], location[1], sprite);
         this.sprite.setDepth(depth);
         this.sprite.setOrigin(0, 0.5);
-        this.sprite.rotation = Phaser.Math.Angle.Between(0, 0, direction[0], direction[1]); // rotated bullet to direction vector
+        this.sprite.rotation = rotation; // rotated bullet to direction vector
         this.sprite.scale = this.scale;
 
         this.destroyed = false;
@@ -79,9 +79,9 @@ export default class Bullet {
      * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} other
      */
     onHit(self, other) {
-
         /** @type {Bullet}*/ (/** @type {unknown}*/ (self)).destroyed = true;
         self.destroy(); //
+        ParticlesSystem.create('HitWall', 400, 400);
 
         // Call onHit method of other object
         try {

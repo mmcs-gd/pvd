@@ -8,12 +8,21 @@ export class ParticlesSystem {
      * @param {Phaser.Scene} scene
      * @param {Object.<string, ParticleAsset>} assets 
      */
-    preload(scene, assets = {}) {
+    static preload(scene, assets = {}) {
         this.scene = scene;
         this.assets = assets;
 
         Object.keys(assets).forEach(asset => {
             assets[asset].preload(this.scene);
+        });
+    }
+
+    /**
+     * Init animations for all particles that need to be created
+     */
+    static init() {
+        Object.keys(this.assets).forEach(asset => {
+            this.assets[asset].init(this.scene);
         });
     }
 
@@ -25,14 +34,14 @@ export class ParticlesSystem {
      * @param {number} rotation 
      * @param {number} scale 
      */
-    create(particleKey, x, y, rotation = 0, scale = 1) {
+    static create(particleKey, x = 0, y = 0, rotation = 0, scale = 1) {
         this.assets[particleKey].create(this.scene, x, y, rotation, scale);
     }
 
     /**
      * @param {number} deltaTime 
      */
-    update(deltaTime) {
+    static update(deltaTime) {
 
     }
 }

@@ -18,20 +18,11 @@ export class ParticleSmokeWhisp extends ParticleAsset {
         }
     }
 
-     /**
-     * Create a particle
+    /**
+     * Preload assets required for the particle if required
      * @param {Phaser.Scene} scene 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} rotation 
-     * @param {number} scale 
      */
-    create(scene, x, y, rotation, scale) {
-        for (let i = 0; i <= 26; i++) {
-            const frame_name = `Fx03_${('00' + i).slice(-3)}`;
-            this.frames.push({ key: frame_name });
-        }
-
+    init(scene) {
         // Creating the animation after ensuring that all frames are loaded
         scene.anims.create({
             key: 'Fx03',
@@ -40,7 +31,17 @@ export class ParticleSmokeWhisp extends ParticleAsset {
             repeat: -1,
             hideOnComplete: true
         });
+    }
 
+    /**
+    * Create a particle
+    * @param {Phaser.Scene} scene 
+    * @param {number} x 
+    * @param {number} y 
+    * @param {number} rotation 
+    * @param {number} scale 
+    */
+    create(scene, x, y, rotation, scale) {
         const sprite = scene.add.sprite(x, y, 'Fx03_000');
         sprite.scale = scale;
         sprite.rotation = rotation;

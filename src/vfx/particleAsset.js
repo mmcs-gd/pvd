@@ -8,6 +8,14 @@ export class ParticleAsset {
     }
 
     /**
+    * Init animation for the particle if required
+    * @param {Phaser.Scene} scene 
+    */
+    init(scene) {
+
+    }
+
+    /**
      * Create a particle
      * @param {Phaser.Scene} scene 
      * @param {number} x 
