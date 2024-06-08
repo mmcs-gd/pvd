@@ -109,6 +109,10 @@ export default class BulletsDemoScene extends Phaser.Scene {
             this.physics.world.createDebugGraphic();
         });
 
+        this.input.keyboard.on('keydown-SPACE', event => {
+            this.scene.start('VfxDemoScene');
+        });
+
         this.lastTick = getTime();
     }
 
