@@ -1,43 +1,26 @@
 import Phaser from 'phaser';
-import { MapGenManager2 } from '../src/systems/MapGenManager2.js';
-import { CameraMain } from 'src/systems/CameraMain.js';
-import { FlagManager } from 'src/systems/FlagManager.js';
+import { MapGenManager3 } from '../src/systems/MapGenManager3.js';
 
-// debug bullets params
-const width = 70;
+const width = 28;
 const height = 35;
 
-
-
-export default class MapGen2DemoScene extends Phaser.Scene {
-    /** @type {MapGenManager2 | null} */ genMap;
+export default class MapGen3DemoScene extends Phaser.Scene {
+    /** @type {MapGenManager3 | null} */ genMap;
     /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
 
     constructor() {
-        super({ key: 'MapGen2DemoScene' });
+        super({ key: 'MapGen3DemoScene' });
         this.genMap = null;
     }
 
     preload() {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
-        
-        FlagManager.preload(this);
-        this.genmap = new MapGenManager2(width, height)
+
+        this.genMap = new MapGenManager3(width, height);
     }
 
     create() {
-        const map = this.make.tilemap({width: width, height: height});
-        //this.add.sprite(0,0, 'flag1');
-
-        this.tileSize = 32;
-
-        const camera = new CameraMain(this,this.tileSize*width, this.tileSize*height)
-        FlagManager.create(this);
-        //Add flag spawn
-
-        this.input.on('pointerdown', (pointer) => {
-            this.spawn(pointer);
-        });
+        const map = this.make.tilemap({ width: width, height: height });
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
@@ -63,18 +46,29 @@ export default class MapGen2DemoScene extends Phaser.Scene {
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
 
-        
-        
+        this.setupCamera();
     }
 
-    update (time, delta)
-    {
+    setupCamera() {
+        this.cameras.main.setBounds(0, 0, 1600, 1200);
+        this.cursors = this.input.keyboard.createCursorKeys();
+        let wasd = {
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        };
+        this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
+            camera: this.cameras.main,
+            left: wasd.left,
+            right: wasd.right,
+            up: wasd.up,
+            down: wasd.down,
+            speed: 0.5
+        });
+    }
+
+    update(time, delta) {
         this.controls.update(delta);
     }
-
-    spawn(pointer)
-    {
-        FlagManager.spawnFlag(this, 'flag1', [pointer.x, pointer.y]);
-    }
-    
 }

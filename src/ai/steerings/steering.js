@@ -1,4 +1,4 @@
-import Vector2 from 'phaser/src/math/Vector2'
+import Vector2 from 'phaser/src/math/Vector2.js'
 
 export default class Steering {
     constructor (owner, objects, force = 1) {

@@ -1,5 +1,7 @@
 // @ts-check
 import { gunsMap } from 'src/modules/Gun/constants/assetMap.js';
+import { BulletsManager } from 'src/systems/BulletsManager.js';
+import { ParticlesSystem } from 'src/systems/ParticleSystem.js';
 
 class Gun {
     /** @type {string} */
@@ -16,6 +18,19 @@ class Gun {
     #cost;
     /** @type {number} */
     #range;
+    /** @type {number} */
+    #cooldownTime
+    /** @type {{x: number, y: number}} */
+    #muzzlePosition;
+    /** @type {number} */
+    #bullets
+    /** @type {string} */
+    #bulletType
+    /** @type {number} */
+    #currentCooldownTime;
+    /** @type {number} */
+    #currentBullets;
+
 
     constructor({
         id,
@@ -24,7 +39,14 @@ class Gun {
         weaponType,
         damage,
         cost,
-        range
+        range,
+        cooldownTime = 1,
+        bullets = 1,
+        bulletType = "bullet1",
+        muzzlePosition = {
+            x: 0,
+            y: 0,
+        }
     }) {
         if (!assetKey || !gunsMap[assetKey]) {
             throw new Error(
@@ -38,7 +60,46 @@ class Gun {
         this.#damage = damage;
         this.#cost = cost;
         this.#range = range;
+        this.#cooldownTime = cooldownTime;
+        this.#muzzlePosition = muzzlePosition;
+        this.#currentCooldownTime = 0;
+        this.#bullets = bullets;
+        this.#bulletType = bulletType;
+        this.#currentBullets = bullets;
     }
+
+    /**
+     * Shoot
+     * @param {number[]} location 
+     * @param {number} rotation 
+     */
+    shoot = (location, rotation) => {
+        if (this.#currentCooldownTime > 0 || this.#currentBullets <= 0) return;
+        this.#currentBullets--;
+        this.#currentCooldownTime = this.#cooldownTime;
+
+        let randType = Math.random();
+        BulletsManager.spawnBullet(this.#bulletType, location, 1, rotation, 200, this.#range, 0.5);
+        ParticlesSystem.create('GunFire', location[0], location[1], rotation, 0.15);
+    }
+
+    /**
+     * Reload the gun.
+     */
+    reload = () => {
+        if (this.#bullets == this.#currentBullets) return;
+        ParticlesSystem.create('GunCocking', location[0], location[1]);
+        this.#currentBullets = this.#bullets;
+    }
+
+    /**
+     * Update cooldown time.
+     * @param {number} deltaTime 
+     */
+    update(deltaTime) {
+        this.#currentCooldownTime -= deltaTime;
+    }
+
     // sorry!
     get assetKey() {
         return this.#assetKey;
@@ -60,6 +121,9 @@ class Gun {
     }
     get range() {
         return this.#range;
+    }
+    get muzzlePosition() {
+        return this.#muzzlePosition;
     }
 }
 
