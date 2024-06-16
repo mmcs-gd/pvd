@@ -11,6 +11,9 @@ export class SampleScene extends Phaser.Scene {
     /** @type {Penguin[]} */
     penguins = [];
 
+    /** @type {Penguin[]} */
+    unitGameObjects = [];
+
     /** @type {Phaser.GameObjects.Arc} */
     target;
 
@@ -40,35 +43,35 @@ export class SampleScene extends Phaser.Scene {
             'range': 300
         });
         this.penguins.push(
-            new Penguin(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, {
+            new Penguin(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, this.unitGameObjects, {
                 bodyKey: '2c',
                 gunConfig,
                 stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
-            new Penguin(this, 100, 100, {
+            new Penguin(this, 100, 100, this.unitGameObjects, {
                 bodyKey: '1c',
                 gunConfig,
                 stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
-            new Penguin(this, GAME_WIDTH - 100, 100, {
+            new Penguin(this, GAME_WIDTH - 100, 100, this.unitGameObjects, {
                 bodyKey: '3c',
                 gunConfig,
                 stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
-            new Penguin(this, 100, GAME_HEIGHT - 100, {
+            new Penguin(this, 100, GAME_HEIGHT - 100, this.unitGameObjects, {
                 bodyKey: '4c',
                 gunConfig,
                 stats: {},
                 target: this.target,
                 faceToTarget: true,
             }),
-            new Penguin(this, GAME_WIDTH - 100, GAME_HEIGHT - 100, {
+            new Penguin(this, GAME_WIDTH - 100, GAME_HEIGHT - 100, this.unitGameObjects, {
                 bodyKey: '5c',
                 gunConfig,
                 stats: {},

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import BuyItem from "../src/buy-item.js";
+import BuyItem from "../src/UI/buy-item.js";
 
 describe("BuyItem", () => {
   describe("constructor", () => {

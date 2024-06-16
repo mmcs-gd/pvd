@@ -16,7 +16,7 @@ const CAPTIONS = [
     'Я не люблю майонез!',
 ];
 
-const LOADING_CAPTION_ORIGIN ={
+const LOADING_CAPTION_ORIGIN = {
     x: 80,
     y: 40,
 };
@@ -111,7 +111,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     get #captionsSpacing() {
-        return  Number(this.sys.game.config.height) / 3;
+        return Number(this.sys.game.config.height) / 3;
     }
 
     spawnNextCaption() {
@@ -140,7 +140,7 @@ class PreloaderScene extends Phaser.Scene {
     }
 
     next() {
-        this.scene.start('LoaderTestScene');
+        this.scene.start('SteeringScene');
     }
 
     get #nextBgColorIdx() {
@@ -150,7 +150,7 @@ class PreloaderScene extends Phaser.Scene {
     updateBgColor() {
         this.#bgColorLerpValue += BG_LERP_DELTA;
 
-        if ((this.#updateCounter >> BG_COLOR_UPDATE_FRAMESPAWN << BG_COLOR_UPDATE_FRAMESPAWN ) === this.#updateCounter) {
+        if ((this.#updateCounter >> BG_COLOR_UPDATE_FRAMESPAWN << BG_COLOR_UPDATE_FRAMESPAWN) === this.#updateCounter) {
             this.#bgColorLerpValue %= 1;
             this.#currentBgColorIdx = this.#nextBgColorIdx;
         }
@@ -167,11 +167,11 @@ class PreloaderScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor(newColor);
     }
 
-    updateCaptions () {
+    updateCaptions() {
         this.children.each((child) => {
             if (child instanceof Phaser.GameObjects.Text) {
                 if (child === this.#loadingText) {
-                    child.text = `${LOADING_TEXT_BASE}${ '.'.repeat(this.#captionDotsCounter)}`;
+                    child.text = `${LOADING_TEXT_BASE}${'.'.repeat(this.#captionDotsCounter)}`;
                 } else {
                     child.text = `${child.text}.`;
                 }
@@ -179,7 +179,7 @@ class PreloaderScene extends Phaser.Scene {
         });
 
         // update number of dots every 512 frames
-        if ((this.#updateCounter >> CAPTION_DOTS_UPDATE_FRAMESPAWN << CAPTION_DOTS_UPDATE_FRAMESPAWN ) === this.#updateCounter) {
+        if ((this.#updateCounter >> CAPTION_DOTS_UPDATE_FRAMESPAWN << CAPTION_DOTS_UPDATE_FRAMESPAWN) === this.#updateCounter) {
             this.#captionDotsCounter = (this.#captionDotsCounter + 1) % 4;
         }
     }
@@ -195,7 +195,7 @@ class PreloaderScene extends Phaser.Scene {
 
         this.updateBgColor();
 
-        this.#updateCounter +=1 ;
+        this.#updateCounter += 1;
     }
 }
 
