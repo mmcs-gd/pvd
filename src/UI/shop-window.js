@@ -9,7 +9,7 @@ import coinIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 8.pn
 
 import ShopItem from './shop-item.js';
 import Inventory from '../inventory.js';
-import BuyItem from '../buy-item.js';
+import BuyItem from './buy-item.js';
 import { Scene } from 'phaser';
 
 export default class ShopWindow {
@@ -27,7 +27,7 @@ export default class ShopWindow {
 
         this.openButton = openButton;
         this.openButton.on('pointerdown', () => {
-            if(!ShopWindow.isWindowOpen){
+            if (!ShopWindow.isWindowOpen) {
                 this.showWindow();
             }
         });
@@ -59,9 +59,9 @@ export default class ShopWindow {
         ShopItem.preload(scene, prefix);
     }
 
-     /**
-     * @param {Scene} scene 
-     */
+    /**
+    * @param {Scene} scene 
+    */
     create(scene) {
         let totalWidth = scene.cameras.main.width;
         let totalHeight = scene.cameras.main.height;
@@ -98,7 +98,7 @@ export default class ShopWindow {
         this.rightArrow.setDisplaySize(arrowButtonSize, arrowButtonSize);
         this.rightArrow.setDepth(2);
         this.rightArrow.on('pointerdown', () => {
-            if(this.startShopItemInd + this.shopItemLen > this.buyItems.length - 1){
+            if (this.startShopItemInd + this.shopItemLen > this.buyItems.length - 1) {
                 return;
             }
             this.startShopItemInd += this.shopItemLen;
@@ -132,7 +132,7 @@ export default class ShopWindow {
                  * @param {BuyItem} item 
                  */
                 (item) => {
-                    if(this.inventory.money < item.price){
+                    if (this.inventory.money < item.price) {
                         return;
                     }
                     this.inventoryItemContainer.push(item);
@@ -152,7 +152,7 @@ export default class ShopWindow {
         let coinContainer = scene.add.container(0, 0);
 
         let coinIconSize = 30;
-        let coinIcon = scene.add.image(0,0, ShopWindow.prefix + 'coinIcon').setOrigin(0.5, 0.5);
+        let coinIcon = scene.add.image(0, 0, ShopWindow.prefix + 'coinIcon').setOrigin(0.5, 0.5);
         coinIcon.setDisplaySize(coinIconSize, coinIconSize);
         this.coinText = scene.add.text(-coinIconSize * 0.5, 0, this.inventory.money.toString(), {
             fontSize: '16px',
@@ -186,7 +186,7 @@ export default class ShopWindow {
     }
 
     #updateShopItemsDisplay() {
-        let itemInd = this.startShopItemInd; 
+        let itemInd = this.startShopItemInd;
         for (let i = 0; i < this.shopItemLen; i++, itemInd++) {
             if (itemInd >= this.buyItems.length) {
                 this.shopItems[i].hide();
@@ -210,7 +210,7 @@ export default class ShopWindow {
     /**
      * @param {Array<BuyItem>} items 
      */
-    updateShopItems(items){
+    updateShopItems(items) {
         this.items = items;
         this.#updateShopItemsDisplay();
     }

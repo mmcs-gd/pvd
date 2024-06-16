@@ -4,7 +4,7 @@ import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguin
 import { loadPenguinsNGunsFromDB } from 'src/utils/resource-loaders/load-penguins-n-guns-db.js';
 
 class LoaderTestScene extends Phaser.Scene {
-
+    /** @type {Array} */ gameObjects;
     constructor() {
         super('LoaderTestScene');
     }
@@ -78,10 +78,10 @@ class LoaderTestScene extends Phaser.Scene {
             }
         ];
 
-        const penguins = loadPenguinsNGunsFromDB(config, {
+        const penguins = loadPenguinsNGunsFromDB(config, this.gameObjects,{
             scene: this,
             target: this.target,
-            sceneCenter
+            sceneCenter,
         });
 
         const ANGLE_STEP = 2 * Math.PI / 10;

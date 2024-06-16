@@ -2,7 +2,7 @@ import shopItemBackground from '../../assets/sprites/pack/UI/Shopping Screen/Art
 import activeBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy.png';
 import disabledBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy 4.png';
 import goldIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 8.png';
-import BuyItem from '../buy-item.js';
+import BuyItem from './buy-item.js';
 
 export default class ShopItem {
     static /** @type {string} */ prefix;
@@ -28,7 +28,7 @@ export default class ShopItem {
     create(scene) {
         this.container = scene.add.container(0.5, 0.5);
 
-        let background = scene.add.image(0, 0, ShopItem.prefix + 'shopItemBackground').setOrigin(0.5,0.5);
+        let background = scene.add.image(0, 0, ShopItem.prefix + 'shopItemBackground').setOrigin(0.5, 0.5);
         background.setDisplaySize(this.width, this.height);
 
         let imageSize = this.width * 0.1;
@@ -46,7 +46,7 @@ export default class ShopItem {
         })
         this.description.setDepth(1);
 
-        let buyButtonContainer = scene.add.container(0,0);
+        let buyButtonContainer = scene.add.container(0, 0);
         let buyButtonWidth = this.width * 0.7;
         let buyButtonHeight = 40;
         this.buyButton = scene.add.image(0, 0, ShopItem.prefix + 'activeBuyButton').setOrigin(0.5).setInteractive();
@@ -63,7 +63,7 @@ export default class ShopItem {
 
         buyButtonContainer.add(this.buyButton);
         buyButtonContainer.add(this.buyCostText);
-        buyButtonContainer.setPosition(0, this.height *0.5 -buyButtonHeight);
+        buyButtonContainer.setPosition(0, this.height * 0.5 - buyButtonHeight);
         buyButtonContainer.setDepth(1);
 
         this.container.add(background);
@@ -81,9 +81,9 @@ export default class ShopItem {
      */
     fillWith(item, money) {
         this.item = item;
-        
-        if(item == null){
-            this.itemImage.setTexture(null);    
+
+        if (item == null) {
+            this.itemImage.setTexture(null);
             this.description.setText('');
             this.buyCostText.setText('');
             this.buyButton.setTexture(ShopItem.prefix + 'disabledBuyButton');
@@ -93,7 +93,7 @@ export default class ShopItem {
         this.itemImage.setTexture(item.spriteName);
         this.description.setText(item.description);
         this.buyCostText.setText(item.price);
-        if(money < item.price) {
+        if (money < item.price) {
             this.buyButton.setTexture(ShopItem.prefix + 'disabledBuyButton');
             this.buyButton.setInteractive(false);
         } else {

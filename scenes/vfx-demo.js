@@ -14,6 +14,7 @@ const bulletsDepth = 0; // set 11 - bullets will display above column
 
 export default class VfxDemoScene extends Phaser.Scene {
     /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
+    /** @type {Array} */ unitGameObjects;
 
     constructor() {
         super({ key: 'VfxDemoScene' });
@@ -98,7 +99,7 @@ export default class VfxDemoScene extends Phaser.Scene {
 
         this.target = this.add.circle(0, 0, 5, 0xff0000);
 
-        this.penguin = new Penguin(this, 200, 300, {
+        this.penguin = new Penguin(this, 200, 300, this.unitGameObjects, {
             bodyKey: '2c',
             gunConfig,
             stats: {},

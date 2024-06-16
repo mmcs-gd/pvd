@@ -4,8 +4,9 @@ import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoade
 import ShopWindow from '../src/UI/shop-window.js';
 import shopIcon from '../assets/sprites/pack/UI/Gameplay Screen/Artboard 10.png';
 import Inventory from '../src/inventory.js';
-import Penguin from '../src/penguin.js';
-import Gun from '../src/gun.js';
+import ShopPenguin from 'src/UI/shop-penguin.js';
+import ShopGun from 'src/UI/shop-gun.js';
+
 
 //! TEST IMPORTS
 import penguinSpriteTest1 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 29.png';
@@ -47,15 +48,15 @@ export default class StartingScene extends Phaser.Scene {
         this.inventory = new Inventory(200);
 
         let penguins = [];
-        penguins.push(new Penguin(10, 'Super penguin omg', 'penguinSpriteTest1'));
-        penguins.push(new Penguin(20, 'Super super penguin omg', 'penguinSpriteTest1'));
-        penguins.push(new Penguin(5, 'Default penguin', 'penguinSpriteTest2'));
-        penguins.push(new Penguin(300, 'Mega ultra penguin', 'penguinSpriteTest2'));
-        penguins.push(new Penguin(150, 'Super half mega ultra penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(10, 'Super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new ShopPenguin(20, 'Super super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new ShopPenguin(5, 'Default penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(300, 'Mega ultra penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(150, 'Super half mega ultra penguin', 'penguinSpriteTest2'));
 
         let guns = [];
-        guns.push(new Gun(50, 'Mega gun', 'gunSpriteTest1'));
-        guns.push(new Gun(100, 'Ultra mega gun', 'gunSpriteTest2'));
+        guns.push(new ShopGun(50, 'Mega gun', 'gunSpriteTest1'));
+        guns.push(new ShopGun(100, 'Ultra mega gun', 'gunSpriteTest2'));
 
         let shopButtonSize = 80;
         this.openPenguinShopButton = this.add.image(shopButtonSize * 0.5, shopButtonSize * 0.5, 'shopIcon').setInteractive();
