@@ -1,11 +1,11 @@
-import shopBackground from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 1 copy.png'
-import closeIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 18.png';
-import windowBackground from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 12.png';
-import rightActiveArrowButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 13 copy 2.png';
-import rightDisabledArrowButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 13 copy 3.png';
-import leftActiveArrowButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 13.png';
-import leftDisabledArrowButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 13 copy.png';
-import coinIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 8.png';
+import shopBackground from '/sprites/pack/UI/Shopping Screen/Artboard 1 copy.png?url'
+import closeIcon from '/sprites/pack/UI/Shopping Screen/Artboard 18.png?url';
+import windowBackground from '/sprites/pack/UI/Shopping Screen/Artboard 12.png?url';
+import rightActiveArrowButton from '/sprites/pack/UI/Shopping Screen/Artboard 13 copy 2.png?url';
+import rightDisabledArrowButton from '/sprites/pack/UI/Shopping Screen/Artboard 13 copy 3.png?url';
+import leftActiveArrowButton from '/sprites/pack/UI/Shopping Screen/Artboard 13.png?url';
+import leftDisabledArrowButton from '/sprites/pack/UI/Shopping Screen/Artboard 13 copy.png?url';
+import coinIcon from '/sprites/pack/UI/Shopping Screen/Artboard 8.png?url';
 
 import ShopItem from './shop-item.js';
 import Inventory from '../inventory.js';

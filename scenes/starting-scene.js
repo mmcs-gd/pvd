@@ -1,16 +1,16 @@
 import Phaser from 'phaser';
-import dungeonRoomJson from '../assets/dungeon_room.json';
+import dungeonRoomJson from '/dungeon_room.json?url';
 import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
 import ShopWindow from '../src/UI/shop-window.js';
-import shopIcon from '../assets/sprites/pack/UI/Gameplay Screen/Artboard 10.png';
+import shopIcon from '/sprites/pack/UI/Gameplay Screen/Artboard 10.png?url';
 import Inventory from '../src/inventory.js';
 import ShopPenguin from 'src/UI/shop-penguin.js';
 import ShopGun from 'src/UI/shop-gun.js';
 
 
 //! TEST IMPORTS
-import penguinSpriteTest1 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 29.png';
-import penguinSpriteTest2 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 27.png';
+import penguinSpriteTest1 from '/sprites/pack/UI/Shopping Screen/Artboard 29.png?url';
+import penguinSpriteTest2 from '/sprites/pack/UI/Shopping Screen/Artboard 27.png?url';
 //! TEST IMPORTS END
 
 export default class StartingScene extends Phaser.Scene {
