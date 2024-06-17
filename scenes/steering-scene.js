@@ -26,16 +26,15 @@ export class SteeringScene extends Phaser.Scene {
 
     create() {
         const map = this.make.tilemap({ key: 'map' });
-        console.log(map);
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
-        const belowFloor = map.createLayer('Ground', tileset, 0, 0);
+        // const belowFloor = map.createLayer('Ground', tileset, 0, 0);
         const belowLayer = map.createLayer('Floor', tileset, 0, 0);
         const worldLayer = map.createLayer('Walls', tileset, 0, 0);
-        const decals = map.createLayer('Decals', tileset, 0, 0);
+        // const decals = map.createLayer('Decals', tileset, 0, 0);
         const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
-        const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
+        // const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
         this.tileSize = 32;
 
         worldLayer.setCollisionBetween(1, 500);

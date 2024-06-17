@@ -12,6 +12,7 @@ const height = 35;
 export default class MapGen2DemoScene extends Phaser.Scene {
     /** @type {MapGenManager2 | null} */ genMap;
     /** @type {Phaser.GameObjects.Sprite[]} */ gameObjects;
+    /** @type {Phaser.Cameras.Controls.FixedKeyControl} */ controls;
 
     constructor() {
         super({ key: 'MapGen2DemoScene' });
@@ -22,7 +23,7 @@ export default class MapGen2DemoScene extends Phaser.Scene {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
         
         FlagManager.preload(this);
-        this.genmap = new MapGenManager2(width, height)
+        this.genMap = new MapGenManager2(width, height)
     }
 
     create() {
@@ -36,7 +37,9 @@ export default class MapGen2DemoScene extends Phaser.Scene {
         //Add flag spawn
 
         this.input.on('pointerdown', (pointer) => {
-            this.spawn(pointer);
+            const x = this.cameras.main.centerX + (pointer.x - this.cameras.main.centerX) / this.cameras.main.zoomX + this.cameras.main.scrollX;
+            const y = this.cameras.main.centerY + (pointer.y - this.cameras.main.centerY) / this.cameras.main.zoomY + this.cameras.main.scrollY;
+            this.spawn({x, y});
         });
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
