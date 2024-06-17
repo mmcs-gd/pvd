@@ -22,7 +22,7 @@ export default class VfxDemoScene extends Phaser.Scene {
 
     preload() {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
-        this.load.tilemapTiledJSON('map', 'dungeon_room.json');
+        this.load.tilemapTiledJSON('map2', 'dungeon_room2.json');
 
         this.load.image('dog01', 'sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png');
         this.load.audio('gun_cocking', 'sfx/gun-cocking.mp3');
@@ -47,7 +47,8 @@ export default class VfxDemoScene extends Phaser.Scene {
         ParticlesSystem.init();
 
         this.gameObjects = [];
-        const map = this.make.tilemap({ key: 'map' });
+        this.unitGameObjects = [];
+        const map = this.make.tilemap({ key: 'map2' });
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
@@ -119,9 +120,11 @@ export default class VfxDemoScene extends Phaser.Scene {
             this.penguin.reloadGun();
         });
 
-        setInterval(() => {
-            ParticlesSystem.create('Exposion', 200, 500, 0, 0.3)
-        }, 3000)
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => ParticlesSystem.create('Exposion', 200, 500, 0, 0.3),
+            loop: true
+        });
     }
 
     update() {

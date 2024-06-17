@@ -10,7 +10,7 @@ export class CameraMain {
     static cameraScene;
 
     /**
-     * @param {Phaser.Scene} scene
+     * @param {Phaser.Scene & { controls: Phaser.Cameras.Controls.FixedKeyControl }} scene
      */
     constructor(scene, maxwidtht, maxheight) {
         const cursors = scene.input.keyboard.createCursorKeys();

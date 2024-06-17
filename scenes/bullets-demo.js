@@ -38,18 +38,17 @@ export default class BulletsDemoScene extends Phaser.Scene {
     create() {
         this.audio_manager.on_create();
         this.audio_manager.setVolume(AudioType.SFX, 1);
-        console.log('BulletsDemoScene');
         this.gameObjects = [];
         const map = this.make.tilemap({ key: 'map' });
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
-        const belowFloor = map.createLayer('Ground', tileset, 0, 0);
+        // const belowFloor = map.createLayer('Ground', tileset, 0, 0);
         const belowLayer = map.createLayer('Floor', tileset, 0, 0);
         const worldLayer = map.createLayer('Walls', tileset, 0, 0);
-        const decals = map.createLayer('Decals', tileset, 0, 0);
+        // const decals = map.createLayer('Decals', tileset, 0, 0);
         const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
-        const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
+        // const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
         this.tileSize = 32;
 
         worldLayer.setCollisionBetween(1, 500);
@@ -76,14 +75,18 @@ export default class BulletsDemoScene extends Phaser.Scene {
         this.lastTick = getTime();
 
         // test bullet reactions with realtime added objects
-        setTimeout(() => {
-            const newDog = this.add.sprite(600, 200, 'dog01');
-            this.physics.add.existing(newDog);
-            newDog.setScale(0.5);
-            /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setSize(180, 130);
-            /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setOffset(50, 48);
-            this.gameObjects.push(newDog);
-        }, 3000);
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => {
+                const newDog = this.add.sprite(600, 200, 'dog01');
+                this.physics.add.existing(newDog);
+                newDog.setScale(0.5);
+                /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setSize(180, 130);
+                /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setOffset(50, 48);
+                this.gameObjects.push(newDog);
+            },
+            callbackScope: this,
+        });
     }
 
     update() {
