@@ -1,7 +1,7 @@
-import shopItemBackground from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3.png';;
-import activeBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy.png';
-import disabledBuyButton from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 3 copy 4.png';
-import goldIcon from '../../assets/sprites/pack/UI/Shopping Screen/Artboard 8.png';
+import shopItemBackground from '/sprites/pack/UI/Shopping Screen/Artboard 3.png?url';
+import activeBuyButton from '/sprites/pack/UI/Shopping Screen/Artboard 3 copy.png?url';
+import disabledBuyButton from '/sprites/pack/UI/Shopping Screen/Artboard 3 copy 4.png?url';
+import goldIcon from '/sprites/pack/UI/Shopping Screen/Artboard 8.png?url';
 import BuyItem from './buy-item.js';
 
 export default class ShopItem {
