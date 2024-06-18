@@ -7,8 +7,9 @@ class StateTableRow {
     }
 }
 class StateTable {
-    constructor(context) {
-        this.states = [];
+    constructor(initialState, context = null) {
+        this.states = [initialState];
+        this.initialState = initialState;
         this.context = context;
     }
 
