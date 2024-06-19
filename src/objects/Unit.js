@@ -68,6 +68,10 @@ export default class Unit extends Phaser.GameObjects.Container {
         return this.#physicBody.speed;
     }
 
+    set speed(speed) {
+        this.#physicBody.speed = speed;
+    }
+
     get normalizedVelocity() {
         return this.#physicBody.velocity.clone().normalize();
     }

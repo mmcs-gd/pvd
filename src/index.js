@@ -10,6 +10,7 @@ import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
 import VfxDemoScene from 'scenes/vfx-demo.js';
 import StartingScene from 'scenes/starting-scene.js';
 import { SteeringScene } from 'scenes/steering-scene.js';
+import AIDemoScene from 'scenes/ai-demo.js';
 
 const config = {
     type: Phaser.AUTO,

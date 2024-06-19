@@ -1,16 +1,26 @@
 import Vector2 from 'phaser/src/math/Vector2.js';
+import SteeringManager from 'src/ai/steerings/steering-manager.js';
+import Unit from 'src/objects/Unit.js';
+import { State } from '../state.js';
 
-export class RunToTargetState {
-    constructor(position, target, acceptableRange) {
-        this.position = position;
-        this.target = target;
-        this.speed = 5.0;
+export class RunToTargetState extends State {
+    /** @type {Unit} */ owner;
+    /** @type {SteeringManager} */ steeringManager;
+    
+    constructor(owner, acceptableRange) {
+        super(owner);
+        this.steeringManager = owner.steeringManager;
         this.acceptableRange = acceptableRange;
     }
 
+    onStateEnter = (context) => {
+        console.log("Run to target state enter!");
+    }
+
+    onStateExit = (context) => {
+        console.log("Run to target state exit!");
+    }
+
     update() {
-        const toTarget = new Vector2(this.target.x - this.position.x, this.target.y - this.position.y).normalize();
-        this.position.x += Math.floor(this.speed * toTarget.x);
-        this.position.y += Math.floor(this.speed * toTarget.y);
     }
 }

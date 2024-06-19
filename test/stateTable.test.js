@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { StateTableRow, StateTable } from "../src/ai/behaviour/state.js";
+import { StateTableRow, StateTable } from "../src/ai/behaviour/state-table.js";
 
 describe("StateTableRow", () => {
   describe("constructor", () => {
@@ -7,9 +7,9 @@ describe("StateTableRow", () => {
       const condition = () => true;
       const onStateChanged = () => {};
       const row = new StateTableRow("start", condition, "end", onStateChanged);
-      expect(row.initialState).to.equal("start");
+      expect(row.inState).to.equal("start");
       expect(row.condition).to.equal(condition);
-      expect(row.finalState).to.equal("end");
+      expect(row.outState).to.equal("end");
       expect(row.onStateChanged).to.equal(onStateChanged);
     });
 
@@ -26,7 +26,7 @@ describe("StateTable", () => {
     it("should create a StateTable object with an empty states array and specified context", () => {
       const context = { some: "context" };
       const table = new StateTable(context);
-      expect(table.states).to.be.an("array").that.is.empty;
+      expect(table.stateRows).to.be.an("array").that.is.empty;
       expect(table.context).to.equal(context);
     });
   });
@@ -38,7 +38,7 @@ describe("StateTable", () => {
       const condition = () => true;
       const row = new StateTableRow("start", condition, "end");
       table.addState(row);
-      expect(table.states).to.include(row);
+      expect(table.stateRows).to.include(row);
     });
   });
 

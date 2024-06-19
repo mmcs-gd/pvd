@@ -7,12 +7,18 @@ import { Penguin } from 'src/modules/Penguin/Penguin.js';
 import { Gun } from '../src/modules/Gun/Gun.js';
 import { ParticleGunCocking } from 'src/vfx/particleGunCocking.js';
 import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
+import { Dog } from 'src/modules/Dog/Dog.js';
+import Unit from 'src/objects/Unit.js';
+import Vector2 from 'phaser/src/math/Vector2.js'
+import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
 
 // debug bullets params
 const bulletsDepth = 0; // set 11 - bullets will display above column
 
 export default class AIDemoScene extends Phaser.Scene {
-    gameObjects;
+    /** @type {Array<Unit>} */ gameObjects;
+    /** @type {Array<Penguin>} */ penguins;
+    /** @type {Array<Dog>} */ dogs;
 
     constructor() {
         super({ key: 'AIDemoScene' });
@@ -43,6 +49,8 @@ export default class AIDemoScene extends Phaser.Scene {
         ParticlesSystem.init();
 
         this.gameObjects = [];
+        this.penguins = [];
+        this.dogs = [];
 
         this.createMap();
 
@@ -52,7 +60,7 @@ export default class AIDemoScene extends Phaser.Scene {
         // add layers or array of game objects in second param, that mean blocking with bullets
         BulletsManager.create([this.worldLayer, this.aboveLayer, this.aboveUpper, this.gameObjects], bulletsDepth);
 
-        const dog = this.createDog();
+        this.createDog();
         this.createPenguin();
         this.lastTick = getTime();
 
@@ -86,19 +94,17 @@ export default class AIDemoScene extends Phaser.Scene {
 
         this.worldLayer.setCollisionBetween(1, 500);
         this.aboveLayer.setDepth(10);
+
+        AvoidCollisionSteering.tilemapLayer = this.worldLayer;
     }
 
     createDog() {
         // spawn not animated dog for debug collision
-        const dog = this.add.sprite(600, 300, 'dog01');
-        this.physics.add.existing(dog);
-        dog.setScale(0.75);
-        /** @type {Phaser.Physics.Arcade.Body}*/ (dog.body).setSize(180 * 1.25, 130 * 1.25);
-        /** @type {Phaser.Physics.Arcade.Body}*/ (dog.body).setOffset(50, 48);
-
+        const dog = new Dog(this, 600, 300, "dog01");
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 0))
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 600))
         this.gameObjects.push(dog);
-
-        return dog;
+        this.dogs.push(dog)
     }
 
     createPenguin() {
@@ -119,7 +125,7 @@ export default class AIDemoScene extends Phaser.Scene {
             }
         });
 
-        this.penguin = new Penguin(this, 200, 400, {
+        this.penguin = new Penguin(this, 200, 400, [], {
             bodyKey: '2c',
             gunConfig,
             stats: {},
@@ -127,6 +133,7 @@ export default class AIDemoScene extends Phaser.Scene {
             faceToTarget: true,
         });
         this.gameObjects.push(this.penguin);
+        this.penguins.push(this.penguin);
     }
 
     update() {
