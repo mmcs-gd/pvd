@@ -24,21 +24,15 @@ export class DogStateTable extends StateTable {
 
     get patrolState() {
         if (this.#patrolState == null)
-            this.#patrolState = new PatrolState(this.owner, 30);
+            this.#patrolState = new PatrolState(this.owner, 300);
 
         return this.#patrolState
     }
 
     get runToTargetState() {
-        return new RunToTargetState(this.owner, 5);
-    }
-}
+        if (this.#runToTargetState == null) 
+            this.#runToTargetState = new RunToTargetState(this.owner, 100);
 
-export class DogStateMachine extends FiniteStateMachine {
-    /** @type {Unit} */ owner;
-
-    constructor(owner, context) {
-        const table = new DogStateTable(owner, context);
-        super(table);
+        return this.#runToTargetState;
     }
 }

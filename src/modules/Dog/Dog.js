@@ -21,9 +21,9 @@ export class Dog extends Unit {
     constructor(scene, x, y, spriteName) {
         super(scene, x, y)
         this.#sprite = scene.physics.add.image(0, 0, spriteName);
-        this.#sprite.setScale(0.75);
-        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setSize(180 * 1.25, 130 * 1.25);
-        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setOffset(50, 48);
+        // this.#sprite.setScale(0.75);
+        // /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setSize(180 * 1.25, 130 * 1.25);
+        // /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setOffset(-90 * 1.25, -65 * 1.25);
         this.add(this.#sprite);
         const bounds = this.#sprite.getBounds();
         this.setWidthHeight(bounds.width, bounds.height);
@@ -37,12 +37,12 @@ export class Dog extends Unit {
             force
         );
 
-        // const steerings = [this.collisionSteering];
-        const steerings = [];
+        const steerings = [this.collisionSteering];
+        // const steerings = [];
         this.steeringManager = new SteeringManager(steerings, this, 60, 30);
 
         this.dogStateTable = new DogStateTable(this, this.context);
-        this.stateMachine = new FiniteStateMachine(new DogStateTable(this, this.context))
+        this.stateMachine = new FiniteStateMachine(this.dogStateTable);
 
         scene.add.existing(this);
     }
@@ -50,20 +50,24 @@ export class Dog extends Unit {
     get context() {
         return {
             // @ts-ignore
-            enemies: this.scene.penguins
+            enemies: this.scene.penguins,
+            // @ts-ignore
+            gameObjects: this.scene.gameObjects
         }
     }
 
     update = (time = 0, delta) => {
         super.update(time, delta)
 
-        this.setOrientation(
-            !this.bodyVelocity || this.bodyVelocity.x > 0
-                ? 'forward'
-                : 'backward'
-        );
+        if (this.bodyVelocity.length() > 10) {
+            this.setOrientation(
+                !this.bodyVelocity || this.bodyVelocity.x < 0
+                    ? 'forward'
+                    : 'backward'
+            );
+        }
 
-        this.stateMachine.update();
+        this.stateMachine.update(time, delta);
     }
 
     get isForwardOrientation() {

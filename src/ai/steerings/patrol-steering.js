@@ -38,11 +38,10 @@ export class PatrolSteering extends Steering {
 
         const position = this.owner.bodyPosition;
         if (this.currentTarget.distance(position) <= this.owner.speed + this.EPS) {
-            this.currentTagetIndex++;
+            this.currentTargetIndex++;
         }
         const directionToTarget = this.currentTarget.subtract(position).normalize();
         const impulse =  directionToTarget.scale(this.owner.speed);
-        console.log(impulse);
         return impulse
     }
 }

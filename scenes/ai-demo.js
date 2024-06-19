@@ -102,7 +102,7 @@ export default class AIDemoScene extends Phaser.Scene {
         // spawn not animated dog for debug collision
         const dog = new Dog(this, 600, 300, "dog01");
         dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 0))
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 600))
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(240, 400))
         this.gameObjects.push(dog);
         this.dogs.push(dog)
     }
@@ -137,11 +137,12 @@ export default class AIDemoScene extends Phaser.Scene {
     }
 
     update() {
-        const deltaTime = (getTime() - this.lastTick) / 1000;
+        const currentTime = getTime();
+        const deltaTime = (currentTime - this.lastTick) / 1000;
 
         if (this.gameObjects) {
             this.gameObjects.forEach(function (element) {
-                element.update(deltaTime);
+                element.update(currentTime, deltaTime);
             });
         }
 

@@ -12,6 +12,7 @@ export default class Unit extends Phaser.GameObjects.Container {
     /** @type {SteeringManager} */ #steeringManager
     /** @type {number} */ #id
     /** @type {number} */ #radius
+    /** @type {number} */ mySpeed;
 
     static nextId = 1;
 
@@ -70,6 +71,7 @@ export default class Unit extends Phaser.GameObjects.Container {
 
     set speed(speed) {
         this.#physicBody.speed = speed;
+        this.mySpeed = speed;
     }
 
     get normalizedVelocity() {

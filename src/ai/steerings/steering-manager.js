@@ -58,7 +58,8 @@ export default class SteeringManager {
         
         steeringVelocity = this.#truncate(steeringVelocity, this.maxForce);
         steeringVelocity = this.#truncate(steeringVelocity, this.maxSpeed);
-        steeringVelocity.add(this.owner.bodyVelocity).scale(0.5);
+        // steeringVelocity.add(this.owner.bodyVelocity).scale(0.5);
+        // console.log(steeringVelocity);
         this.owner.setVelocity(steeringVelocity);
     }
 

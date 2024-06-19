@@ -10,7 +10,7 @@ export class State {
         this.owner = owner
     }
 
-    update() {}
+    update(time, delta) {}
 }
 
 export class FiniteStateMachine {
@@ -23,8 +23,9 @@ export class FiniteStateMachine {
         this.currentState = stateTable.initialState;
     }
 
-    update() {
-        this.currentState.update();
+    update(time, delta) {
+        // console.log(time);
+        this.currentState.update(time, delta);
         this.currentState = this.stateTable.getNextState(this.currentState);
     }
 }

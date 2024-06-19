@@ -15,17 +15,20 @@ export class PatrolState extends State {
     }
 
     onStateEnter = (context) => {
+        console.log("Patrol enter!");
         this.patrolSteering = new PatrolSteering(this.owner, [], 40);
         this.steeringManager.addSteering(this.patrolSteering);
         this.steeringManager.addMoveForce();
     }
 
     onStateExit = (context) => {
+        console.log("OnExit");
         this.steeringManager.removeLastSteering();
         this.steeringManager.removeMoveForce();
+        console.log([...this.steeringManager.steerings]);
     }
 
-    update() {
+    update(time, delta) {
         this.steeringManager.update();
     }
 

@@ -54,7 +54,7 @@ class StateTable {
             if (row.outState.onStateEnter) {
                 row.outState.onStateEnter(this.context);
             }
-            return row.finalState;
+            return row.outState;
         }
         return current;
     }
