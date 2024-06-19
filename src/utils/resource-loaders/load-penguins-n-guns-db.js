@@ -20,7 +20,6 @@ const loadPenguinsNGunsFromDB = (
     const penguinsConfigs = Object.fromEntries(
         penguinsIds.map(id => [id, penguinsDB[id]])
     );
-
     const penIdToGunId = Object.fromEntries(pairs.map(
         ({penguinId, gunId}) => [penguinId, gunId]
     ));
