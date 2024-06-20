@@ -9,7 +9,7 @@ import { ParticleGunCocking } from 'src/vfx/particleGunCocking.js';
 import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguins-n-guns-assets.js';
 import { Dog } from 'src/modules/Dog/Dog.js';
 import Unit from 'src/objects/Unit.js';
-import Vector2 from 'phaser/src/math/Vector2.js'
+import Vector2 from 'phaser/src/math/Vector2.js';
 import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
 
 // debug bullets params
@@ -100,11 +100,11 @@ export default class AIDemoScene extends Phaser.Scene {
 
     createDog() {
         // spawn not animated dog for debug collision
-        const dog = new Dog(this, 600, 300, "dog01");
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 0))
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(240, 400))
+        const dog = new Dog(this, 600, 300, { health: 1, reward: 1, assetKey: 'dog01' });
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 0));
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(240, 400));
         this.gameObjects.push(dog);
-        this.dogs.push(dog)
+        this.dogs.push(dog);
     }
 
     createPenguin() {

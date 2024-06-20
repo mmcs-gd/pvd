@@ -83,6 +83,7 @@ class LoaderTestScene extends Phaser.Scene {
             sceneCenter,
         });
 
+       
         const ANGLE_STEP = 2 * Math.PI / 10;
         let angle = 0;
         penguins.forEach((pen, idx) => {
@@ -91,6 +92,9 @@ class LoaderTestScene extends Phaser.Scene {
             angle += ANGLE_STEP;
         });
         this.gameObjects.push(...penguins);
+
+        console.log(penguins[0].assetKey);
+
 
         // Setup debug boundaries
         this.input.keyboard.on('keydown-D', event => {
@@ -110,9 +114,8 @@ class LoaderTestScene extends Phaser.Scene {
                 element.update();
             });
         }
-
         this.input.keyboard.on('keydown-SPACE', event => {
-            this.scene.start('PenguinSampleScene');
+            this.scene.start('StartingScene');
         });
     }
 }

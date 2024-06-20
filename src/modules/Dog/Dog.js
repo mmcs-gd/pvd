@@ -9,22 +9,30 @@ import Unit from 'src/objects/Unit.js';
 export class Dog extends Unit {
     /** @type {DogStateTable} */ dogStateTable;
     /** @type {FiniteStateMachine} */ stateMachine;
-    /** @type {"forward" | "backward"} */ #orientation = "forward";
+    /** @type {"forward" | "backward"} */ #orientation = 'forward';
     /** @type {Phaser.GameObjects.Image} */ #sprite;
+    /** @type {number} */ #health;
+    /** @type {number} */ #reward;
+    /** @type {boolean} */ #isDead = false;
 
     /**
-     * @param {Phaser.Scene} scene 
+     * @param {Phaser.Scene} scene
      * @param {number} x
      * @param {number} y
-     * @param {string} spriteName
+     * @param {Object} options
+     * @param {number} options.health
+     * @param {number} options.reward
+     * @param {string} options.assetKey
     */
-    constructor(scene, x, y, spriteName) {
-        super(scene, x, y)
-        this.#sprite = scene.physics.add.image(0, 0, spriteName);
-        // this.#sprite.setScale(0.75);
-        // /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setSize(180 * 1.25, 130 * 1.25);
-        // /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setOffset(-90 * 1.25, -65 * 1.25);
+    constructor(scene, x, y, { health, reward, assetKey }) {
+        super(scene, x, y);
+
+        this.#health = health;
+        this.#reward = reward;
+
+        this.#sprite = scene.physics.add.image(0, 0, assetKey);
         this.add(this.#sprite);
+
         const bounds = this.#sprite.getBounds();
         this.setWidthHeight(bounds.width, bounds.height);
 
@@ -33,12 +41,11 @@ export class Dog extends Unit {
         this.collisionSteering = new AvoidCollisionSteering(
             /** @type {Unit} */(this),
             // @ts-ignore
-            scene.gameObjects, 
+            scene.gameObjects,
             force
         );
 
         const steerings = [this.collisionSteering];
-        // const steerings = [];
         this.steeringManager = new SteeringManager(steerings, this, 60, 30);
 
         this.dogStateTable = new DogStateTable(this, this.context);
@@ -50,14 +57,17 @@ export class Dog extends Unit {
     get context() {
         return {
             // @ts-ignore
-            enemies: this.scene.penguins,
+            enemies: this.scene.penguins ?? [],
             // @ts-ignore
-            gameObjects: this.scene.gameObjects
-        }
+            gameObjects: this.scene.gameObjects ?? []
+        };
     }
 
-    update = (time = 0, delta) => {
-        super.update(time, delta)
+    /**
+     * @param {number} [delta]
+     */
+    update(time = 0, delta) {
+        super.update(time, delta);
 
         if (this.bodyVelocity.length() > 10) {
             this.setOrientation(
@@ -75,9 +85,53 @@ export class Dog extends Unit {
     }
 
     /**
-   * @param {'forward' | 'backward'} orientation
-   */
-    setOrientation = (orientation) => {
+     * @returns {number}
+     */
+    get Health() {
+        return this.#health;
+    }
+
+    /**
+     * @returns {number}
+     */
+    get Reward() {
+        return this.#reward;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isDead() {
+        return this.#isDead;
+    }
+
+    /**
+     * @param {number} damage
+     */
+    takeDamage(damage) {
+        if (this.#isDead) return;
+
+        this.#health -= damage;
+        if (this.#health <= 0) {
+            this.die();
+            console.log('I died');
+        }
+    }
+
+    die() {
+        this.#isDead = true;
+        this.setActive(false);
+        this.setVisible(false);
+    }
+
+    getAssetKey() {
+        return this.#sprite;
+    }
+
+    /**
+     * @param {'forward' | 'backward'} orientation
+     */
+    setOrientation(orientation) {
         if (orientation === this.#orientation) return;
 
         this.#orientation = orientation;
@@ -86,6 +140,5 @@ export class Dog extends Unit {
             this.isForwardOrientation ? 1 : -1,
             1
         );
-    };
-
+    }
 }
