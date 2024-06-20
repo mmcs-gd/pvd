@@ -245,12 +245,12 @@ export class Penguin extends Unit {
         const bulletY = this.y + PENGUIN_BELLY_BUTTON_POSITION.y + (offsetX * sinRotation + offsetY * cosRotation);
 
         this.#gunConfig.shoot([bulletX, bulletY], bulletRotation);
-    }
+    };
 
     /**
      * Reload gun
      */
     reloadGun = () => {
         this.#gunConfig.reload();
-    }
+    };
 }

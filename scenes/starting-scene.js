@@ -16,6 +16,7 @@ import { loadDogsFromDB } from 'src/utils/resource-loaders/load-dogs-db.js';
 //! TEST IMPORTS
 import penguinSpriteTest1 from '/sprites/pack/UI/Shopping Screen/Artboard 29.png?url';
 import penguinSpriteTest2 from '/sprites/pack/UI/Shopping Screen/Artboard 27.png?url';
+import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
 //! TEST IMPORTS END
 
 
@@ -31,7 +32,7 @@ export default class StartingScene extends Phaser.Scene {
         // loading map tiles and json with positions
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
         this.load.tilemapTiledJSON('map', dungeonRoomJson);
-        this.load.image('Dog2', 'assets\sprites\pack\Characters\Dogs\Dog02\Idle\Idle_00.png?url');
+        this.load.image('Dog2', 'sprites\\pack\\Characters\\Dogs\\Dog02\\Idle\\Idle_00.png?url');
 
 
         //! TEST LOADS
@@ -64,11 +65,6 @@ export default class StartingScene extends Phaser.Scene {
 
         this.gameObjects = [];
 
-
-
-
-
-
         this.inventory = new Inventory(200);
 
         let penguins = [];
@@ -100,7 +96,6 @@ export default class StartingScene extends Phaser.Scene {
             this.openGunShopButton.setPosition(0, 0);
         });
 
-
         const map = this.make.tilemap({ key: 'map' });
 
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
@@ -114,6 +109,7 @@ export default class StartingScene extends Phaser.Scene {
         const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
         this.tileSize = 32;
 
+        AvoidCollisionSteering.tilemapLayer = worldLayer;
 
         worldLayer.setCollisionBetween(1, 500);
         aboveLayer.setDepth(10);
@@ -152,14 +148,14 @@ export default class StartingScene extends Phaser.Scene {
 
     killDogSlowly(ind)
     {
-        if (this.gameObjects[ind].isDead()) return;
+        if (this.gameObjects[ind].isDead) return;
 
         this.gameObjects[ind].takeDamage(10);
-        if (this.gameObjects[ind].getHealth() <= 0) {
-            console.log(this.gameObjects[ind].getHealth());
-            this.inventory.money += this.gameObjects[ind].getReward();
+        if (this.gameObjects[ind].Health <= 0) {
+            console.log(this.gameObjects[ind].Health);
+            this.inventory.money += this.gameObjects[ind].Reward;
+        }
     }
-}
 
     update() {
         if (this.gameObjects) {
@@ -173,9 +169,6 @@ export default class StartingScene extends Phaser.Scene {
                 this.killDogSlowly(1);
             });
         }
-
-
-
     }
 
     /**

@@ -10,13 +10,15 @@ import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
 import VfxDemoScene from 'scenes/vfx-demo.js';
 import { SteeringScene } from 'scenes/steering-scene.js';
 import LoseWindowScene from 'scenes/lose-window-scene.js';
+import AIDemoScene from 'scenes/ai-demo.js';
+
 const config = {
     type: Phaser.AUTO,
     width: GAME_CONFIG.width,
     height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [StartingScene, PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, VfxDemoScene],
+    scene: [AIDemoScene, StartingScene, PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, VfxDemoScene],
     //scene: [LoseWindowScene, StartingScene],
     physics: {
         default: 'arcade',

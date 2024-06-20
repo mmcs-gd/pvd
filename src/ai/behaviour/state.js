@@ -1,36 +1,31 @@
-class StateTableRow {
-    constructor(initialState, condition, finalState, onStateChanged = null) {
-        this.initialState = initialState;
-        this.condition = condition;
-        this.finalState = finalState;
-        this.onStateChanged = onStateChanged;
-    }
-}
-class StateTable {
-    constructor(context) {
-        this.states = [];
-        this.context = context;
+import Unit from "src/objects/Unit.js";
+import { StateTable } from "./state-table.js";
+
+export class State {
+    /** @type {function} */ onStateEnter;
+    /** @type {function} */ onStateExit;
+    /** @type {Unit} */ owner;
+
+    constructor(owner) {
+        this.owner = owner
     }
 
-    addState(state)
-    {
-        this.states.push(state);
+    update(time, delta) {}
+}
+
+export class FiniteStateMachine {
+    /** @type {StateTable} */ stateTable;
+    /** @type {State} */ currentState;
+
+    /** @param {StateTable} stateTable */
+    constructor(stateTable) {
+        this.stateTable = stateTable;
+        this.currentState = stateTable.initialState;
     }
 
-    getNextState(current)
-    {
-        const row = this.states
-            .filter(x => x.initialState === current)
-            .find(x=>x.condition.call(this.context));
-        if (row)
-        {
-            if (row.onStateChanged)
-            {
-                row.onStateChanged.call(this.context);
-            }
-            return row.finalState;
-        }
-        return current;
+    update(time, delta) {
+        // console.log(time);
+        this.currentState.update(time, delta);
+        this.currentState = this.stateTable.getNextState(this.currentState);
     }
 }
-export {StateTableRow, StateTable};

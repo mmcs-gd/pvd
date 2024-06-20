@@ -1,28 +1,19 @@
 import Phaser from 'phaser';
+import { DogStateTable } from 'src/ai/behaviour/dog-fsm.js';
+import { StateTable } from 'src/ai/behaviour/state-table.js';
+import { FiniteStateMachine } from 'src/ai/behaviour/state.js';
+import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
+import SteeringManager from 'src/ai/steerings/steering-manager.js';
+import Unit from 'src/objects/Unit.js';
 
-
-/**
- * @class Dog
- * @extends Phaser.GameObjects.Container
- * @description Dog class
- * @param {Phaser.Scene} scene
- * @param {number} x
- * @param {number} y
- * @param {Object} options
- * @param {number} options.health
- * @param {number} options.reward
- * @param {string} options.assetKey
- * @returns {Dog}
- */
-export class Dog extends Phaser.GameObjects.Container {
-    /** @type {number} */
-    #health;
-    /** @type {number} */
-    #reward;
-    /** @type {Phaser.GameObjects.Image} */
-    #dogSprite;
-    /** @type {boolean} */
-    #isDead = false;
+export class Dog extends Unit {
+    /** @type {DogStateTable} */ dogStateTable;
+    /** @type {FiniteStateMachine} */ stateMachine;
+    /** @type {"forward" | "backward"} */ #orientation = 'forward';
+    /** @type {Phaser.GameObjects.Image} */ #sprite;
+    /** @type {number} */ #health;
+    /** @type {number} */ #reward;
+    /** @type {boolean} */ #isDead = false;
 
     /**
      * @param {Phaser.Scene} scene
@@ -32,77 +23,122 @@ export class Dog extends Phaser.GameObjects.Container {
      * @param {number} options.health
      * @param {number} options.reward
      * @param {string} options.assetKey
-     */
+    */
     constructor(scene, x, y, { health, reward, assetKey }) {
         super(scene, x, y);
 
         this.#health = health;
         this.#reward = reward;
 
+        this.#sprite = scene.physics.add.image(0, 0, assetKey);
+        this.add(this.#sprite);
 
-        console.log(assetKey);
-        if (!assetKey) {
-            throw new Error('Asset key is required');
-        }
+        const bounds = this.#sprite.getBounds();
+        this.setWidthHeight(bounds.width, bounds.height);
 
-        this.#dogSprite = scene.add.image(0, 0, assetKey);
-        this.add(this.#dogSprite);
+        const force = 40;
+        this.speed = 50.0;
+        this.collisionSteering = new AvoidCollisionSteering(
+            /** @type {Unit} */(this),
+            // @ts-ignore
+            scene.gameObjects,
+            force
+        );
+
+        const steerings = [this.collisionSteering];
+        this.steeringManager = new SteeringManager(steerings, this, 60, 30);
+
+        this.dogStateTable = new DogStateTable(this, this.context);
+        this.stateMachine = new FiniteStateMachine(this.dogStateTable);
 
         scene.add.existing(this);
     }
 
+    get context() {
+        return {
+            // @ts-ignore
+            enemies: this.scene.penguins ?? [],
+            // @ts-ignore
+            gameObjects: this.scene.gameObjects ?? []
+        };
+    }
+
     /**
-     * @param {number} time
-     * @param {number} delta
+     * @param {number} [delta]
      */
-    update = (time, delta) => {
+    update(time = 0, delta) {
         super.update(time, delta);
 
-        // Logic to update the dog's position or behavior
-    };
+        if (this.bodyVelocity.length() > 10) {
+            this.setOrientation(
+                !this.bodyVelocity || this.bodyVelocity.x < 0
+                    ? 'forward'
+                    : 'backward'
+            );
+        }
+
+        this.stateMachine.update(time, delta);
+    }
+
+    get isForwardOrientation() {
+        return this.#orientation === 'forward';
+    }
 
     /**
      * @returns {number}
      */
-    getHealth = () => {
+    get Health() {
         return this.#health;
-    };
+    }
 
     /**
      * @returns {number}
      */
-    getReward = () => {
+    get Reward() {
         return this.#reward;
-    };
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isDead() {
+        return this.#isDead;
+    }
 
     /**
      * @param {number} damage
      */
-    takeDamage = (damage) => {
+    takeDamage(damage) {
         if (this.#isDead) return;
 
         this.#health -= damage;
         if (this.#health <= 0) {
             this.die();
-            console.log("I died");
+            console.log('I died');
         }
-    };
+    }
 
-    die = () => {
+    die() {
         this.#isDead = true;
         this.setActive(false);
         this.setVisible(false);
-    };
+    }
+
+    getAssetKey() {
+        return this.#sprite;
+    }
 
     /**
-     * @returns {boolean}
+     * @param {'forward' | 'backward'} orientation
      */
-    isDead = () => {
-        return this.#isDead;
-    };
+    setOrientation(orientation) {
+        if (orientation === this.#orientation) return;
 
-    getAssetKey = () =>
-    {
-        return this.#dogSprite;
+        this.#orientation = orientation;
+
+        this.#sprite.setScale(
+            this.isForwardOrientation ? 1 : -1,
+            1
+        );
     }
 }
