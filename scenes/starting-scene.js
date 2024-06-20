@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
-import dungeonRoomJson from '../assets/dungeon_room.json';
+import dungeonRoomJson from '/dungeon_room.json?url';
 import { DogAnimationLoader } from 'src/utils/resource-loaders/DogAnimationLoader.js';
 import ShopWindow from '../src/UI/shop-window.js';
-import shopIcon from '../assets/sprites/pack/UI/Gameplay Screen/Artboard 10.png';
+import shopIcon from '/sprites/pack/UI/Gameplay Screen/Artboard 10.png?url';
 import Inventory from '../src/inventory.js';
-import Penguin from '../src/penguin.js';
-import Gun from '../src/gun.js';
+import ShopPenguin from 'src/UI/shop-penguin.js';
+import ShopGun from 'src/UI/shop-gun.js';
+
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { dogsMap } from 'src/modules/Dog/constants/assetMap.js';
 import { loadDogsAssets } from 'src/utils/resource-loaders/load-dogs-assets.js';
@@ -13,8 +14,8 @@ import { loadDogsFromDB } from 'src/utils/resource-loaders/load-dogs-db.js';
 
 
 //! TEST IMPORTS
-import penguinSpriteTest1 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 29.png';
-import penguinSpriteTest2 from '../assets/sprites/pack/UI/Shopping Screen/Artboard 27.png';
+import penguinSpriteTest1 from '/sprites/pack/UI/Shopping Screen/Artboard 29.png?url';
+import penguinSpriteTest2 from '/sprites/pack/UI/Shopping Screen/Artboard 27.png?url';
 //! TEST IMPORTS END
 
 
@@ -39,7 +40,7 @@ export default class StartingScene extends Phaser.Scene {
         this.load.image('gunSpriteTest1', '/sprites/pack/Characters/guns/4g.png?url');
         this.load.image('gunSpriteTest2', '/sprites/pack/Characters/guns/6g.png?url');
         //! TEST LOADS END
-        
+
         this.load.image('shopIcon', shopIcon);
         ShopWindow.preload(this, 'shop-window');
 
@@ -51,7 +52,7 @@ export default class StartingScene extends Phaser.Scene {
 
     create() {
         //DogAnimationLoader.create(this);
-        
+
         const config = [
             {
                 name: 'Big Dog',
@@ -63,23 +64,23 @@ export default class StartingScene extends Phaser.Scene {
 
         this.gameObjects = [];
 
-        
 
-       
+
+
 
 
         this.inventory = new Inventory(200);
 
         let penguins = [];
-        penguins.push(new Penguin(10, 'Super penguin omg', 'penguinSpriteTest1'));
-        penguins.push(new Penguin(20, 'Super super penguin omg', 'penguinSpriteTest1'));
-        penguins.push(new Penguin(5, 'Default penguin', 'penguinSpriteTest2'));
-        penguins.push(new Penguin(300, 'Mega ultra penguin', 'penguinSpriteTest2'));
-        penguins.push(new Penguin(150, 'Super half mega ultra penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(10, 'Super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new ShopPenguin(20, 'Super super penguin omg', 'penguinSpriteTest1'));
+        penguins.push(new ShopPenguin(5, 'Default penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(300, 'Mega ultra penguin', 'penguinSpriteTest2'));
+        penguins.push(new ShopPenguin(150, 'Super half mega ultra penguin', 'penguinSpriteTest2'));
 
         let guns = [];
-        guns.push(new Gun(50, 'Mega gun', 'gunSpriteTest1'));
-        guns.push(new Gun(100, 'Ultra mega gun', 'gunSpriteTest2'));
+        guns.push(new ShopGun(50, 'Mega gun', 'gunSpriteTest1'));
+        guns.push(new ShopGun(100, 'Ultra mega gun', 'gunSpriteTest2'));
 
         let shopButtonSize = 80;
         this.openPenguinShopButton = this.add.image(shopButtonSize * 0.5, shopButtonSize * 0.5, 'shopIcon').setInteractive();
@@ -98,7 +99,7 @@ export default class StartingScene extends Phaser.Scene {
             this.openPenguinShopButton.setPosition(0, 0);
             this.openGunShopButton.setPosition(0, 0);
         });
-    
+
 
         const map = this.make.tilemap({ key: 'map' });
 
@@ -119,7 +120,7 @@ export default class StartingScene extends Phaser.Scene {
 
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
-        
+
         const dogs = loadDogsFromDB(config, {
             scene: this
         });
@@ -153,7 +154,7 @@ export default class StartingScene extends Phaser.Scene {
     {
         if (this.gameObjects[ind].isDead()) return;
 
-        this.gameObjects[ind].takeDamage(10); 
+        this.gameObjects[ind].takeDamage(10);
         if (this.gameObjects[ind].getHealth() <= 0) {
             console.log(this.gameObjects[ind].getHealth());
             this.inventory.money += this.gameObjects[ind].getReward();
@@ -172,7 +173,7 @@ export default class StartingScene extends Phaser.Scene {
                 this.killDogSlowly(1);
             });
         }
-        
+
 
 
     }

@@ -3,6 +3,12 @@ import Phaser from 'phaser';
 import { gunsMap } from 'src/modules/Gun/constants/assetMap.js';
 import { bodiesMap } from 'src/modules/Penguin/constants/assetMap.js';
 import { Gun } from 'src/modules/Gun/Gun.js';
+import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
+import SteeringManager from 'src/ai/steerings/steering-manager.js';
+import Unit from 'src/objects/Unit.js';
+import Steering from 'src/ai/steerings/steering.js';
+import CohesionSteering from 'src/ai/steerings/cohesion-steering.js';
+import SeparationSteering from 'src/ai/steerings/separation-steering.js';
 
 /* Regarding to 0,0 */
 const PENGUIN_BELLY_BUTTON_POSITION = {
@@ -18,7 +24,7 @@ const PENGUIN_BELLY_BUTTON_POSITION = {
 
 /**
  * @class Penguin
- * @extends Phaser.GameObjects.Container
+ * @extends Unit
  * @description Penguin class
  * @param {Phaser.Scene} scene
  * @param {number} x
@@ -28,13 +34,13 @@ const PENGUIN_BELLY_BUTTON_POSITION = {
  * @param {Target} [target]
  * @returns {Penguin}
  */
-export class Penguin extends Phaser.GameObjects.Container {
+export class Penguin extends Unit {
     /** @type {'forward' | 'backward'} */
     #orientation = 'forward';
     #faceToTarget = false;
     /** @type {Target | undefined} */
     #target;
-    /** @type {Phaser.GameObjects.Image} */
+    /** @type {Phaser.Types.Physics.Arcade.ImageWithDynamicBody} */
     #penguinBody;
     /** @type {Phaser.GameObjects.Image} */
     #gun;
@@ -51,6 +57,7 @@ export class Penguin extends Phaser.GameObjects.Container {
    * @param {Phaser.Scene} scene
    * @param {number} x
    * @param {number} y
+   * @param {Array<Unit>} gameObjects
    * @param {Object} options
    * @param {Object | undefined} options.stats // sorry!
    * @param {string} options.bodyKey
@@ -58,7 +65,7 @@ export class Penguin extends Phaser.GameObjects.Container {
    * @param {Target} [options.target]
    * @param {boolean} [options.faceToTarget=false]
    */
-    constructor(scene, x, y, { bodyKey, gunConfig, stats, target, faceToTarget }) {
+    constructor(scene, x, y, gameObjects, { bodyKey, gunConfig, stats, target, faceToTarget }) {
         super(scene, x, y);
 
         if (!bodyKey || !bodiesMap[bodyKey]) {
@@ -71,7 +78,9 @@ export class Penguin extends Phaser.GameObjects.Container {
         this.#target = target;
         this.#faceToTarget = !!faceToTarget;
 
-        this.#penguinBody = scene.add.image(0, 0, bodyKey);
+        this.#penguinBody = scene.physics.add.image(0, 0, bodyKey);
+        // this.#penguinBody.setCollideWorldBounds(true); // Пример настройки коллизий с миром
+        // this.#penguinBody.setVelocity(0, 80);
 
         this.#gun = scene.add.image(
             PENGUIN_BELLY_BUTTON_POSITION.x,
@@ -83,6 +92,36 @@ export class Penguin extends Phaser.GameObjects.Container {
 
         this.add(this.#penguinBody);
         this.add(this.#gun);
+
+        let penguinBounds = this.#penguinBody.getBounds();
+        this.setWidthHeight(penguinBounds.width, penguinBounds.height);
+        gameObjects.push(this);
+        const force = 40;
+        this.collisionSteering = new AvoidCollisionSteering(
+            /** @type {Unit} */(this),
+            gameObjects,
+            force
+        );
+        this.cohesionSteering = new CohesionSteering(
+            /** @type {Unit} */(this),
+            gameObjects,
+            force
+        );
+        this.separationSteering = new SeparationSteering(
+            /** @type {Unit} */(this),
+            gameObjects,
+            force
+        );
+        let steerings = new Array();;
+        steerings.push(this.collisionSteering, this.cohesionSteering, this.separationSteering);
+        let steeringManager = new SteeringManager(steerings, this, 60, 30);
+        // if (startVelocity.y != 0) {
+        //     console.log(this.id, steeringManager.moveForcesCount);
+        //     steeringManager.addMoveForce();
+        // }
+        this.steeringManager = steeringManager;
+        this.collisionSteering.steeringManager = this.steeringManager;
+
 
         scene.add.existing(this);
     }
@@ -104,13 +143,44 @@ export class Penguin extends Phaser.GameObjects.Container {
             : 0;
 
         this.#gun.rotation = rotation;
+        this.#gunConfig.update(delta);
 
         this.setOrientation(
             !this.#target || this.#penguinBody.getBounds().centerX < this.#target.x
                 ? 'forward'
                 : 'backward'
         );
+
+        this.steeringManager.update();
     };
+
+    separate() {
+        if (this.separationSteering.active) {
+            this.separationSteering.active = false;
+            this.steeringManager.removeMoveForce();
+        }else{
+            if(this.cohesionSteering.active){
+                this.cohesionSteering.active = false;
+                this.steeringManager.removeMoveForce();
+            }
+            this.separationSteering.active = true;
+            this.steeringManager.addMoveForce();
+        }
+    }
+
+    cohesion() {
+        if (this.cohesionSteering.active) {
+            this.cohesionSteering.active = false;
+            this.steeringManager.removeMoveForce();
+        }else{
+            if(this.separationSteering.active){
+                this.separationSteering.active = false;
+                this.steeringManager.removeMoveForce();
+            }
+            this.cohesionSteering.active = true;
+            this.steeringManager.addMoveForce();
+        }
+    }
 
     /**
    * @param {Target} target
@@ -158,4 +228,29 @@ export class Penguin extends Phaser.GameObjects.Container {
         );
         this.#gun.setScale(1, this.isForwardOrientation ? 1 : -1);
     };
+
+    /**
+     * Shoot or other action of gun
+     */
+    useGun = () => {
+        const offsetX = this.#gunConfig.muzzlePosition.x;
+        const offsetY = this.isForwardOrientation ? -this.#gunConfig.muzzlePosition.y : this.#gunConfig.muzzlePosition.y;
+
+        const bulletRotation = this.#gun.rotation;
+
+        const cosRotation = Math.cos(bulletRotation);
+        const sinRotation = Math.sin(bulletRotation);
+
+        const bulletX = this.x + PENGUIN_BELLY_BUTTON_POSITION.x + (offsetX * cosRotation - offsetY * sinRotation);
+        const bulletY = this.y + PENGUIN_BELLY_BUTTON_POSITION.y + (offsetX * sinRotation + offsetY * cosRotation);
+
+        this.#gunConfig.shoot([bulletX, bulletY], bulletRotation);
+    }
+
+    /**
+     * Reload gun
+     */
+    reloadGun = () => {
+        this.#gunConfig.reload();
+    }
 }

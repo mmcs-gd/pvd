@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { BulletsManager } from '../src/systems/BulletsManager.js';
-
+import { AudioManager, AudioType } from '../src/audio/audio-manager.js';
+import { ParticlesSystem } from '../src/systems/ParticleSystem.js';
+import { ParticleHitWall } from '../src/vfx/particleHitWall.js';
 // debug bullets params
 const bulletVelocity = 200;
 const maxBulletDistance = 400;
@@ -14,30 +16,39 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'BulletsDemoScene' });
+        this.audio_manager = new AudioManager(".", this);
     }
 
     preload() {
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
-        this.load.tilemapTiledJSON('map', 'dungeon_room2.json');
+        this.load.tilemapTiledJSON('map', 'dungeon_room.json');
 
         this.load.image('dog01', 'sprites/pack/Characters/Dogs/Dog01/Idle/Idle_00.png');
 
         BulletsManager.preload(this);
+        ParticlesSystem.preload(
+            this,
+            {
+                'HitWall': new ParticleHitWall(),
+            }
+        );
+        this.audio_manager.on_preload();
     }
 
     create() {
-        console.log('BulletsDemoScene');
+        this.audio_manager.on_create();
+        this.audio_manager.setVolume(AudioType.SFX, 1);
         this.gameObjects = [];
         const map = this.make.tilemap({ key: 'map' });
 
         const tileset = map.addTilesetImage('Dungeon_Tileset', 'tiles');
 
-        const belowFloor = map.createLayer('Ground', tileset, 0, 0);
+        // const belowFloor = map.createLayer('Ground', tileset, 0, 0);
         const belowLayer = map.createLayer('Floor', tileset, 0, 0);
         const worldLayer = map.createLayer('Walls', tileset, 0, 0);
-        const decals = map.createLayer('Decals', tileset, 0, 0);
+        // const decals = map.createLayer('Decals', tileset, 0, 0);
         const aboveLayer = map.createLayer('Upper', tileset, 0, 0);
-        const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
+        // const aboveUpper = map.createLayer('Leaves', tileset, 0, 0);
         this.tileSize = 32;
 
         worldLayer.setCollisionBetween(1, 500);
@@ -50,13 +61,13 @@ export default class BulletsDemoScene extends Phaser.Scene {
         const dog = this.add.sprite(300, 500, 'dog01');
         this.physics.add.existing(dog);
         dog.setScale(0.5);
-        dog.body.setSize(180, 130);
-        dog.body.setOffset(50, 48);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (dog.body).setSize(180, 130);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (dog.body).setOffset(50, 48);
 
         this.gameObjects.push(dog);
 
         // add layers or array of game objects in second param, that mean blocking with bullets
-        BulletsManager.create(this, [worldLayer, aboveLayer, this.gameObjects], bulletsDepth);
+        BulletsManager.create([worldLayer, aboveLayer, this.gameObjects], bulletsDepth);
 
         // reloading for debug scene
         this.reloadingTime = 0;
@@ -64,14 +75,18 @@ export default class BulletsDemoScene extends Phaser.Scene {
         this.lastTick = getTime();
 
         // test bullet reactions with realtime added objects
-        setTimeout(() => {
-            const newDog = this.add.sprite(600, 200, 'dog01');
-            this.physics.add.existing(newDog);
-            newDog.setScale(0.5);
-            newDog.body.setSize(180, 130);
-            newDog.body.setOffset(50, 48);
-            this.gameObjects.push(newDog);
-        }, 3000);
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => {
+                const newDog = this.add.sprite(600, 200, 'dog01');
+                this.physics.add.existing(newDog);
+                newDog.setScale(0.5);
+                /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setSize(180, 130);
+                /** @type {Phaser.Physics.Arcade.Body}*/ (newDog.body).setOffset(50, 48);
+                this.gameObjects.push(newDog);
+            },
+            callbackScope: this,
+        });
     }
 
     update() {
@@ -89,16 +104,17 @@ export default class BulletsDemoScene extends Phaser.Scene {
 
         if (this.reloadingTime < 0) {
             let randType = Math.random();
+            this.audio_manager.play("gunshot")
 
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [0, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 0], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, 0, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI / 2, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -Math.PI / 2, bulletVelocity, maxBulletDistance, fallingSpeed);
 
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, -1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
-            BulletsManager.spawnBullet(this, randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, [-1, 1], bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, -3 * Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
+            BulletsManager.spawnBullet(randType < 0.3 ? 'bullet1' : randType < 0.6 ? 'bullet2' : 'bullet3', [300, 200], bulletsScale, 3 * Math.PI / 4, bulletVelocity, maxBulletDistance, fallingSpeed);
 
             this.reloadingTime = shootingFreq;
         }
@@ -107,6 +123,10 @@ export default class BulletsDemoScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-D', event => {
             // Turn on physics debugging to show player's hitbox
             this.physics.world.createDebugGraphic();
+        });
+
+        this.input.keyboard.on('keydown-SPACE', event => {
+            this.scene.start('VfxDemoScene');
         });
 
         this.lastTick = getTime();

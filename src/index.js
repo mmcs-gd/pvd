@@ -7,14 +7,17 @@ import MapGen2DemoScene from '../scenes/map-gen2-demo.js';
 import StartingScene from '../scenes/starting-scene.js';
 import { GAME_CONFIG } from 'src/resources/game-config.js';
 import { SampleScene } from 'src/modules/Penguin/SampleScene.js';
-
+import VfxDemoScene from 'scenes/vfx-demo.js';
+import { SteeringScene } from 'scenes/steering-scene.js';
+import LoseWindowScene from 'scenes/lose-window-scene.js';
 const config = {
     type: Phaser.AUTO,
     width: GAME_CONFIG.width,
     height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [PreloaderScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, StartingScene],
+    scene: [PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, StartingScene, VfxDemoScene],
+    //scene: [LoseWindowScene, StartingScene],
     physics: {
         default: 'arcade',
         arcade: {

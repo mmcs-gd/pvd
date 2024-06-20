@@ -4,7 +4,7 @@ import { loadPenguinsNGunsAssets } from 'src/utils/resource-loaders/load-penguin
 import { loadPenguinsNGunsFromDB } from 'src/utils/resource-loaders/load-penguins-n-guns-db.js';
 
 class LoaderTestScene extends Phaser.Scene {
-
+    /** @type {Array} */ gameObjects;
     constructor() {
         super('LoaderTestScene');
     }
@@ -17,7 +17,6 @@ class LoaderTestScene extends Phaser.Scene {
     }
 
     create() {
-        console.log(LoaderTestScene);
         this.gameObjects = [];
         const map = this.make.tilemap({key: 'map'});
 
@@ -78,10 +77,10 @@ class LoaderTestScene extends Phaser.Scene {
             }
         ];
 
-        const penguins = loadPenguinsNGunsFromDB(config, {
+        const penguins = loadPenguinsNGunsFromDB(config, this.gameObjects,{
             scene: this,
             target: this.target,
-            sceneCenter
+            sceneCenter,
         });
 
        

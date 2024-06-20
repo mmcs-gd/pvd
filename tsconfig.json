@@ -16,7 +16,8 @@
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "types": [
-            "vite/client"
+            "vite/client",
+            "mocha"
         ]
     },
     "exclude": [

@@ -37,6 +37,7 @@ class AudioManager {
     /** @type {string} */ #assetsPath;
     /** @type {{[soundId: string]: Sound}} */ #soundLibrary;
     /** @type {Phaser.Scene} */ #scene;
+    /** @type {Map<AudioType, number>} */ #volumeLevels;
 
     /**
      * Creates a new AudioManager instance.
@@ -47,6 +48,9 @@ class AudioManager {
         this.#assetsPath = assetsPath;
         this.#scene = scene;
         this.#soundLibrary = {};
+        this.#volumeLevels = new Map();
+        this.#volumeLevels.set(AudioType.SFX, 1.);
+        this.#volumeLevels.set(AudioType.Music, 1.);
         this.#init_builtin_sounds();
     }
 
@@ -54,6 +58,10 @@ class AudioManager {
     #init_builtin_sounds() {
         this.addSound('gunshot', ['sfx/gunshot.mp3', 'sfx/gunshot.ogg'], false, AudioType.SFX);
         this.addSound('bullet_impact', ['sfx/bullet_impact.mp3', 'sfx/bullet_impact.ogg'], false, AudioType.SFX);
+    }
+
+    #update_volume(sound) {
+        sound.handle.setVolume(this.#volumeLevels.get(sound.type) * sound.base_volume);
     }
 
     /**
@@ -76,6 +84,19 @@ class AudioManager {
     }
 
     /**
+     * Sets the volume for a given audio type.
+     * @param {AudioType} audio_type - The audio type as an enum of class AudioType.
+     * @param {number} volume_level - The volume level, must be a number between 0 and 1.
+     */
+    setVolume(audio_type, volume_level) {
+        this.#volumeLevels.set(audio_type, volume_level);
+
+        for (const [key, value] of Object.entries(this.#soundLibrary)) {
+            this.#update_volume(value);
+        }
+    }
+
+    /**
      * Should be called on scene's preload to load all sounds.
      */
     on_preload() {
@@ -95,7 +116,9 @@ class AudioManager {
      * @param {string} key
      */
     play(key) {
-        this.#soundLibrary[key].handle.play();
+        let sound = this.#soundLibrary[key];
+        this.#update_volume(sound);
+        sound.handle.play();
     }
 }
 

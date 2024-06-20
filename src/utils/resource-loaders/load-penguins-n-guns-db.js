@@ -5,6 +5,7 @@ import { penguinsDB } from 'src/resources/db/penguins/index.js';
 
 const loadPenguinsNGunsFromDB = (
     pairs,
+    gameObjects,
     {
         scene,
         target,
@@ -26,7 +27,7 @@ const loadPenguinsNGunsFromDB = (
 
 
     return penguinsIds.map(
-        (id, idx) => new Penguin(scene, 0, 0, {
+        (id, idx) => new Penguin(scene, 0, 0, gameObjects, {
             bodyKey: penguinsConfigs[id].assetKey,
             gunConfig: gunsConfigs[penIdToGunId[id]],
             target,
