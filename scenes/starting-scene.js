@@ -7,11 +7,17 @@ import Inventory from '../src/inventory.js';
 import ShopPenguin from 'src/UI/shop-penguin.js';
 import ShopGun from 'src/UI/shop-gun.js';
 
+import { GAME_CONFIG } from 'src/resources/game-config.js';
+import { dogsMap } from 'src/modules/Dog/constants/assetMap.js';
+import { loadDogsAssets } from 'src/utils/resource-loaders/load-dogs-assets.js';
+import { loadDogsFromDB } from 'src/utils/resource-loaders/load-dogs-db.js';
+
 
 //! TEST IMPORTS
 import penguinSpriteTest1 from '/sprites/pack/UI/Shopping Screen/Artboard 29.png?url';
 import penguinSpriteTest2 from '/sprites/pack/UI/Shopping Screen/Artboard 27.png?url';
 //! TEST IMPORTS END
+
 
 export default class StartingScene extends Phaser.Scene {
     /** @type {object[]} */ gameObjects;
@@ -21,9 +27,12 @@ export default class StartingScene extends Phaser.Scene {
     }
 
     preload() {
+        loadDogsAssets(this);
         // loading map tiles and json with positions
         this.load.image('tiles', 'tileset/Dungeon_Tileset.png');
         this.load.tilemapTiledJSON('map', dungeonRoomJson);
+        this.load.image('Dog2', 'assets\sprites\pack\Characters\Dogs\Dog02\Idle\Idle_00.png?url');
+
 
         //! TEST LOADS
         this.load.image('penguinSpriteTest1', penguinSpriteTest1);
@@ -31,18 +40,33 @@ export default class StartingScene extends Phaser.Scene {
         this.load.image('gunSpriteTest1', '/sprites/pack/Characters/guns/4g.png?url');
         this.load.image('gunSpriteTest2', '/sprites/pack/Characters/guns/6g.png?url');
         //! TEST LOADS END
-        
+
         this.load.image('shopIcon', shopIcon);
         ShopWindow.preload(this, 'shop-window');
 
         //loading sprite-sheets
         // Load dog animations
-        DogAnimationLoader.preload('sprites/pack/Characters/Dogs', this);
 
     }
 
+
     create() {
-        DogAnimationLoader.create(this);
+        //DogAnimationLoader.create(this);
+
+        const config = [
+            {
+                name: 'Big Dog',
+            },
+            {
+                name: 'Dog1',
+            }
+        ];
+
+        this.gameObjects = [];
+
+
+
+
 
 
         this.inventory = new Inventory(200);
@@ -75,8 +99,7 @@ export default class StartingScene extends Phaser.Scene {
             this.openPenguinShopButton.setPosition(0, 0);
             this.openGunShopButton.setPosition(0, 0);
         });
-        
-        this.gameObjects = [];
+
 
         const map = this.make.tilemap({ key: 'map' });
 
@@ -98,10 +121,22 @@ export default class StartingScene extends Phaser.Scene {
         this.physics.world.bounds.width = map.widthInPixels;
         this.physics.world.bounds.height = map.heightInPixels;
 
-        DogAnimationLoader.spawnDog(this, 'Dog01', 'Attack', 200, 200);
-        DogAnimationLoader.spawnDog(this, 'Dog02', 'Walk', 400, 200);
-        DogAnimationLoader.spawnDog(this, 'Dog05', 'Idle', 600, 200);
+        const dogs = loadDogsFromDB(config, {
+            scene: this
+        });
 
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        const ANGLE_STEP = 10;
+        let angle = 0;
+        dogs.forEach((pen, idx) => {
+            pen.x = centerX + ANGLE_STEP;
+            pen.y = centerY;
+            angle += 10;
+        });
+
+        this.gameObjects.push(...dogs);
 
         // Setup debug boundaries
         this.input.keyboard.on('keydown-D', event => {
@@ -115,12 +150,31 @@ export default class StartingScene extends Phaser.Scene {
         });
     }
 
+    killDogSlowly(ind)
+    {
+        if (this.gameObjects[ind].isDead()) return;
+
+        this.gameObjects[ind].takeDamage(10);
+        if (this.gameObjects[ind].getHealth() <= 0) {
+            console.log(this.gameObjects[ind].getHealth());
+            this.inventory.money += this.gameObjects[ind].getReward();
+    }
+}
+
     update() {
         if (this.gameObjects) {
             this.gameObjects.forEach(function (element) {
                 element.update();
             });
+            this.input.keyboard.on('keydown-SPACE', event => {
+                this.killDogSlowly(0);
+            });
+            this.input.keyboard.on('keydown-F', event => {
+                this.killDogSlowly(1);
+            });
         }
+
+
 
     }
 

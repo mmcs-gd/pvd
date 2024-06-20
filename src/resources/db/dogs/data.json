@@ -1,0 +1,15 @@
+[
+    {
+      "id": "Dog1",
+      "health": 10,
+      "reward": 10,
+      "assetKey": "Dog01"
+    },
+    {
+      "id": "Big Dog",
+      "health": 100,
+      "reward": 100,
+      "assetKey": "Dog02"
+
+    }
+]
