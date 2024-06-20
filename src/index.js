@@ -16,7 +16,7 @@ const config = {
     height: GAME_CONFIG.height,
     pixelArt: false,
     zoom: 1.0,
-    scene: [PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, StartingScene, VfxDemoScene],
+    scene: [StartingScene, PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, VfxDemoScene],
     //scene: [LoseWindowScene, StartingScene],
     physics: {
         default: 'arcade',
