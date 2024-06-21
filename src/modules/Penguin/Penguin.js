@@ -66,7 +66,8 @@ export class Penguin extends Unit {
    * @param {boolean} [options.faceToTarget=false]
    */
     constructor(scene, x, y, gameObjects, { bodyKey, gunConfig, stats, target, faceToTarget }) {
-        super(scene, x, y);
+        const { health } = stats; 
+        super(scene, x, y, health);
 
         if (!bodyKey || !bodiesMap[bodyKey]) {
             throw new Error(
@@ -253,4 +254,14 @@ export class Penguin extends Unit {
     reloadGun = () => {
         this.#gunConfig.reload();
     };
+
+    /** @param {Unit} target */
+    attack(target) {
+        const distance = this.distance(target);
+
+        if (distance > this.#gunConfig.range) return;
+
+        this.setTarget(target);
+        this.useGun();
+    }
 }

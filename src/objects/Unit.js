@@ -13,6 +13,8 @@ export default class Unit extends Phaser.GameObjects.Container {
     /** @type {number} */ #id
     /** @type {number} */ #radius
     /** @type {number} */ mySpeed;
+    /** @type {number} */ #health;
+    /** @type {boolean} */ #isDead = false;
 
     static nextId = 1;
 
@@ -21,9 +23,10 @@ export default class Unit extends Phaser.GameObjects.Container {
      * @param {number} x
      * @param {number} y
      */
-    constructor(scene, x, y) {
+    constructor(scene, x, y, health) {
         super(scene, x, y);
         this.#id = Unit.nextId++;
+        this.#health = health;
 
         scene.physics.world.enable(this);
 
@@ -121,5 +124,43 @@ export default class Unit extends Phaser.GameObjects.Container {
         const dx = otherX - this.bodyPosition.x;
         const dy = otherY - this.bodyPosition.y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * @returns {number}
+     */
+    get Health() {
+        return this.#health;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isDead() {
+        return this.#isDead;
+    }
+
+    /**
+     * @param {number} damage
+     */
+    takeDamage(damage) {
+        if (this.#isDead) return;
+
+        this.#health -= damage;
+        if (this.#health <= 0) {
+            this.die();
+            console.log('I died');
+        }
+    }
+
+    die() {
+        this.#isDead = true;
+        this.setActive(false);
+        this.setVisible(false);
+    }
+
+    /** @param {Unit} other */
+    attack(other) {
+        console.log("Attack!");
     }
 }

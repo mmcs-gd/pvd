@@ -11,9 +11,7 @@ export class Dog extends Unit {
     /** @type {FiniteStateMachine} */ stateMachine;
     /** @type {"forward" | "backward"} */ #orientation = 'forward';
     /** @type {Phaser.GameObjects.Image} */ #sprite;
-    /** @type {number} */ #health;
     /** @type {number} */ #reward;
-    /** @type {boolean} */ #isDead = false;
 
     /**
      * @param {Phaser.Scene} scene
@@ -25,9 +23,8 @@ export class Dog extends Unit {
      * @param {string} options.assetKey
     */
     constructor(scene, x, y, { health, reward, assetKey }) {
-        super(scene, x, y);
+        super(scene, x, y, health);
 
-        this.#health = health;
         this.#reward = reward;
 
         this.#sprite = scene.physics.add.image(0, 0, assetKey);
@@ -77,8 +74,6 @@ export class Dog extends Unit {
             );
         }
 
-        console.log("Dog update");
-        console.log(this.bodyPosition);
         this.stateMachine.update(time, delta);
     }
 
@@ -89,41 +84,8 @@ export class Dog extends Unit {
     /**
      * @returns {number}
      */
-    get Health() {
-        return this.#health;
-    }
-
-    /**
-     * @returns {number}
-     */
     get Reward() {
         return this.#reward;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isDead() {
-        return this.#isDead;
-    }
-
-    /**
-     * @param {number} damage
-     */
-    takeDamage(damage) {
-        if (this.#isDead) return;
-
-        this.#health -= damage;
-        if (this.#health <= 0) {
-            this.die();
-            console.log('I died');
-        }
-    }
-
-    die() {
-        this.#isDead = true;
-        this.setActive(false);
-        this.setVisible(false);
     }
 
     getAssetKey() {

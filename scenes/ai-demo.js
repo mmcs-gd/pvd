@@ -128,7 +128,7 @@ export default class AIDemoScene extends Phaser.Scene {
         this.penguin = new Penguin(this, 200, 400, [], {
             bodyKey: '2c',
             gunConfig,
-            stats: {},
+            stats: { health: 200 },
             target: this.gameObjects[0],
             faceToTarget: true,
         });
