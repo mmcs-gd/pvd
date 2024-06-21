@@ -5,36 +5,37 @@ import { State } from '../state.js';
 import { Pursuit } from 'src/ai/steerings/pursuit.js';
 
 function findMinBy(array, fn) {
-  return array.reduce((maxElem, currentElem) => {
-    return fn(currentElem) < fn(maxElem) ? currentElem : maxElem;
-  });
+    if (array.length === 0) return null;
+
+    return array.reduce((maxElem, currentElem) => {
+        return fn(currentElem) < fn(maxElem) ? currentElem : maxElem;
+    });
 }
 
-export class RunToTargetState extends State {
+export class PursuitAndAttackState extends State {
     /** @type {SteeringManager} */ steeringManager;
     /** @type {any} */ context;
     /** @type {Unit} */ target;
     /** @type {any} */ lastAttackTime = 0;
     
-    constructor(owner, acceptableRange) {
+    constructor(owner, loseTargetRange, attackRange) {
         super(owner);
         this.steeringManager = owner.steeringManager;
-        this.acceptableRange = acceptableRange;
+        this.loseTargetRange = loseTargetRange;
+        this.attackRange = attackRange;
     }
 
     onStateEnter = (context) => {
-        console.log("Run to target state enter!");
         this.context = context;
         this.target = this.findClosestTarget();
-        this.pursuitSteering = new Pursuit(this.owner, this.context.gameObjects, 40);
+        this.pursuitSteering = new Pursuit(this.owner, this.context.gameObjects, 40, this.attackRange);
         this.pursuitSteering.target = this.target;
+        this.owner.targetAcquired(this.target);
+
         this.steeringManager.addSteering(this.pursuitSteering);
-        this.steeringManager.removeMoveForce();
-        console.log([...this.steeringManager.steerings]);
     }
 
     onStateExit = (context) => {
-        console.log("Run to target state exit!");
         this.steeringManager.removeLastSteering();
         // this.steeringManager.removeMoveForce();
         this.pursuitSteering = null;
@@ -42,11 +43,20 @@ export class RunToTargetState extends State {
 
     update(time, delta) {
         const target = this.findClosestTarget();
+        if (target === null) {
+            this.target = null;
+            this.owner.targetAcquired(this.target);
+            console.log("Null target in pursuit state");
+            return;
+        }
+
         if (target !== this.target) {
             console.log("New target!");
             this.target = target;
+            this.owner.targetAcquired(this.target);
             this.pursuitSteering.target = target;
         }
+
         this.steeringManager.update();
         if (this.owner.bodyVelocity.length() < 10) {
             this.enqueAttack(time, delta)
@@ -62,8 +72,12 @@ export class RunToTargetState extends State {
     enqueAttack(time, delta) {
         const diff = time - this.lastAttackTime;
         if (diff > 2000){
-            console.log("Attack!");
+            this.owner.attack(this.target);
             this.lastAttackTime = time;
         }
+    }
+
+    shouldLoseTarget = (context) => {
+        return this.target === null || this.owner.distance(this.target) > this.loseTargetRange;
     }
 }

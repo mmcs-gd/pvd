@@ -11,9 +11,8 @@ export class Dog extends Unit {
     /** @type {FiniteStateMachine} */ stateMachine;
     /** @type {"forward" | "backward"} */ #orientation = 'forward';
     /** @type {Phaser.GameObjects.Image} */ #sprite;
-    /** @type {number} */ #health;
     /** @type {number} */ #reward;
-    /** @type {boolean} */ #isDead = false;
+    /** @type {number} */ #damage;
 
     /**
      * @param {Phaser.Scene} scene
@@ -21,20 +20,26 @@ export class Dog extends Unit {
      * @param {number} y
      * @param {Object} options
      * @param {number} options.health
+     * @param {number} options.damage
      * @param {number} options.reward
      * @param {string} options.assetKey
     */
-    constructor(scene, x, y, { health, reward, assetKey }) {
-        super(scene, x, y);
+    constructor(scene, x, y, { health, damage, reward, assetKey }) {
+        super(scene, x, y, health);
 
-        this.#health = health;
         this.#reward = reward;
+        this.#damage = damage;
 
-        this.#sprite = scene.physics.add.image(0, 0, assetKey);
+        this.#sprite = scene.physics.add.sprite(0, 0, assetKey);
+        this.#sprite.setScale(0.75);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setSize(180 * 1.25, 130 * 1.25);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setOffset(50, 48);
         this.add(this.#sprite);
 
         const bounds = this.#sprite.getBounds();
-        this.setWidthHeight(bounds.width, bounds.height);
+        this.setSize(bounds.width, bounds.height);
+         /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setSize(bounds.width, bounds.height);
+         /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setOffset(bounds.width / 2, bounds.height / 2);
 
         const force = 40;
         this.speed = 50.0;
@@ -52,6 +57,12 @@ export class Dog extends Unit {
         this.stateMachine = new FiniteStateMachine(this.dogStateTable);
 
         scene.add.existing(this);
+    }
+
+    getPhysicBody() {
+        console.log("Physic body query");
+        console.log(this.#sprite);
+        return this.#sprite;
     }
 
     get context() {
@@ -87,41 +98,8 @@ export class Dog extends Unit {
     /**
      * @returns {number}
      */
-    get Health() {
-        return this.#health;
-    }
-
-    /**
-     * @returns {number}
-     */
     get Reward() {
         return this.#reward;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isDead() {
-        return this.#isDead;
-    }
-
-    /**
-     * @param {number} damage
-     */
-    takeDamage(damage) {
-        if (this.#isDead) return;
-
-        this.#health -= damage;
-        if (this.#health <= 0) {
-            this.die();
-            console.log('I died');
-        }
-    }
-
-    die() {
-        this.#isDead = true;
-        this.setActive(false);
-        this.setVisible(false);
     }
 
     getAssetKey() {
@@ -140,5 +118,21 @@ export class Dog extends Unit {
             this.isForwardOrientation ? 1 : -1,
             1
         );
+    }
+
+    /** @param {Unit} target */
+    attack(target) {
+        target.takeDamage(this.#damage);
+    }
+
+    die() {
+        super.die();
+
+        try {
+            // @ts-ignore
+            const index = this.scene.dogs.indexOf(this);
+            // @ts-ignore
+            this.scene.dogs.splice(index, 1);
+        } catch (error) { /* empty */ }
     }
 }

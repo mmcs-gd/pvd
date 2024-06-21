@@ -4,12 +4,13 @@ import Vector2 from 'phaser/src/math/Vector2.js';
 
 class Pursuit extends Steering {
     /** @type {Unit} */ #target;
+    /** @type {number} */ #attackDistance;
 
-    constructor (owner, objects, force = 1) {
+    constructor (owner, objects, force = 1, attackDistance = 100) {
         super(owner, objects, force);
         this.ownerSpeed = owner.speed;
         this.#target = null;
-        this.EPS = 100.0;
+        this.#attackDistance = attackDistance;
     }
 
     get target() {
@@ -27,7 +28,7 @@ class Pursuit extends Steering {
         const targetPosition = this.target.bodyPosition;
         const position = this.owner.bodyPosition;
         const distanceToTarget = targetPosition.distance(position);
-        if (distanceToTarget <= this.EPS) {
+        if (distanceToTarget <= this.#attackDistance) {
             return new Vector2(0, 0);
         }
         const directionToTarget = targetPosition.subtract(position).normalize();

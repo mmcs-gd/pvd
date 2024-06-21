@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { ParticlesSystem } from 'src/systems/ParticleSystem.js';
+import Unit from './Unit.js';
 
 export default class Bullet {
     /** @type {Phaser.Scene} */              scene;
@@ -10,6 +11,7 @@ export default class Bullet {
     /** @type {Phaser.GameObjects.Sprite} */ sprite;
     /** @type {number} */                    fallingSpeed;
     /** @type {number} */                    depth;
+    /** @type {number} */                    damage = 50;
 
     /**
      * @param {Phaser.Scene} scene
@@ -22,18 +24,21 @@ export default class Bullet {
      * @param {number} fallingSpeed speed of falling bullet at the end of life time
      * @param {number} depth
      */
-    constructor(scene, sprite = 'bullet1', location = [400, 300], scale = 1, rotation = 0, velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0) {
+    constructor(scene, sprite = 'bullet1', location = [400, 300], scale = 1, rotation = 0, 
+                velocity = 400, distance = 400, blockedLayers = [], fallingSpeed = 1, depth = 0, damage = 50) {
         this.scene = scene;
         this.scale = scale;
         this.distance = distance;
         this.fallingSpeed = fallingSpeed;
         this.velocity = velocity;
+        this.damage = damage;
 
         this.sprite = scene.add.sprite(location[0], location[1], sprite);
         this.sprite.setDepth(depth);
         this.sprite.setOrigin(0, 0.5);
         this.sprite.rotation = rotation; // rotated bullet to direction vector
         this.sprite.scale = this.scale;
+        this.scene.physics.world.enable(this.sprite);
 
         this.destroyed = false;
 
@@ -78,14 +83,17 @@ export default class Bullet {
      * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} self
      * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} other
      */
-    onHit(self, other) {
+    onHit = (self, other) => {
+        console.log("On hit with:");
+        console.log(other);
+
         /** @type {Bullet}*/ (/** @type {unknown}*/ (self)).destroyed = true;
         self.destroy(); //
         ParticlesSystem.create('HitWall', 400, 400);
 
         // Call onHit method of other object
         try {
-            /** @type {Object}*/ (other).onHit();
+            /** @type {Unit}*/ (other).takeDamage(this.damage);
         } catch (error) { /* empty */ }
     }
 }

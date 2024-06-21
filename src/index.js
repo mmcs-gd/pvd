@@ -19,6 +19,7 @@ const config = {
     pixelArt: false,
     zoom: 1.0,
     scene: [AIDemoScene, StartingScene, PreloaderScene, SteeringScene, LoaderTestScene, SampleScene, MainMenuScene, BulletsDemoScene, VfxDemoScene],
+    // scene: [VfxDemoScene],
     //scene: [LoseWindowScene, StartingScene],
     physics: {
         default: 'arcade',

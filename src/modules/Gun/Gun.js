@@ -58,6 +58,7 @@ class Gun {
         this.#name = name;
         this.#weaponType = weaponType;
         this.#damage = damage;
+        console.log(this.#damage);
         this.#cost = cost;
         this.#range = range;
         this.#cooldownTime = cooldownTime;
@@ -79,7 +80,7 @@ class Gun {
         this.#currentCooldownTime = this.#cooldownTime;
 
         let randType = Math.random();
-        BulletsManager.spawnBullet(this.#bulletType, location, 1, rotation, 200, this.#range, 0.5);
+        BulletsManager.spawnBullet(this.#bulletType, location, 1, rotation, 200, this.#range, 0.5, this.#damage);
         ParticlesSystem.create('GunFire', location[0], location[1], rotation, 0.15);
     }
 
