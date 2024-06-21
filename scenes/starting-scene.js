@@ -38,8 +38,8 @@ export default class StartingScene extends Phaser.Scene {
         //! TEST LOADS
         this.load.image('penguinSpriteTest1', penguinSpriteTest1);
         this.load.image('penguinSpriteTest2', penguinSpriteTest2);
-        this.load.image('gunSpriteTest1', '/sprites/pack/Characters/guns/4g.png?url');
-        this.load.image('gunSpriteTest2', '/sprites/pack/Characters/guns/6g.png?url');
+        this.load.image('gunSpriteTest1', 'sprites/pack/Characters/guns/4g.png?url');
+        this.load.image('gunSpriteTest2', 'sprites/pack/Characters/guns/6g.png?url');
         //! TEST LOADS END
 
         this.load.image('shopIcon', shopIcon);
