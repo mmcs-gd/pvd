@@ -16,11 +16,24 @@ export default class SteeringManager {
      * @param {number} maxForce
      */
     constructor(steerings, owner, maxSpeed, maxForce) {
-        this.steerings = steerings;
+        this.steerings = [];
+        steerings.forEach((steering) => {this.addSteering(steering);});
+
         this.owner = owner;
         this.maxSpeed = maxSpeed;
         this.maxForce = maxForce;
         this.#moveForces = 0;
+    }
+
+    /** @param {Steering} steering */
+    addSteering(steering) {
+        this.steerings.push(steering);
+        steering.steeringManager = this;
+    }
+
+    removeLastSteering() {
+        const steering = this.steerings.pop();
+        steering.steeringManager = null;
     }
 
     get moveForcesCount(){
@@ -45,7 +58,8 @@ export default class SteeringManager {
         
         steeringVelocity = this.#truncate(steeringVelocity, this.maxForce);
         steeringVelocity = this.#truncate(steeringVelocity, this.maxSpeed);
-        steeringVelocity.add(this.owner.bodyVelocity).scale(0.5);
+        // steeringVelocity.add(this.owner.bodyVelocity).scale(0.5);
+        // console.log(steeringVelocity);
         this.owner.setVelocity(steeringVelocity);
     }
 
