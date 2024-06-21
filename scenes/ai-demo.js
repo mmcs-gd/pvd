@@ -67,6 +67,8 @@ export default class AIDemoScene extends Phaser.Scene {
         // console.log(objectBodies);
         // BulletsManager.create(this.gameObjects, bulletsDepth);
 
+        this.flag = this.add.circle(0, 0, 5, 0xff0000);
+
         this.lastTick = getTime();
 
         this.setupInputs();
@@ -75,7 +77,11 @@ export default class AIDemoScene extends Phaser.Scene {
     setupInputs() {
         this.input.on('pointerdown', event => {
             if (event.leftButtonDown()) {
-                this.penguin.useGun();
+                const mouseX = this.input.mousePointer.x;
+                const mouseY = this.input.mousePointer.y;
+                this.penguin.setDestination(new Vector2(mouseX, mouseY))
+                this.flag.x = mouseX;
+                this.flag.y = mouseY;
             }
         });
 
@@ -143,8 +149,6 @@ export default class AIDemoScene extends Phaser.Scene {
             target: null,
             faceToTarget: true,
         });
-
-        this.penguin.setDestination(new Vector2(550, 300));
 
         this.gameObjects.push(this.penguin);
         this.penguins.push(this.penguin);

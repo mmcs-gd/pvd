@@ -28,7 +28,7 @@ export class GoToTargetSteering extends Steering {
     calculateImpulse () {
         if (this.targetPoint == null) return new Phaser.Math.Vector2(0, 0);
 
-        if (this.targetPoint.distance(this.owner.bodyPosition) <= this.owner.mySpeed + this.EPS) {
+        if (this.targetPoint.distance(this.owner.bodyPosition) <= this.EPS) {
             return new Phaser.Math.Vector2(0, 0); // reached the target
         }
 
