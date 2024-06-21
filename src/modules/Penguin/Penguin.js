@@ -82,7 +82,7 @@ export class Penguin extends Unit {
         this.#target = target;
         this.#faceToTarget = !!faceToTarget;
 
-        this.#penguinBody = scene.physics.add.image(0, 0, bodyKey);
+        this.#penguinBody = scene.physics.add.sprite(0, 0, bodyKey);
         // this.#penguinBody.setCollideWorldBounds(true); // Пример настройки коллизий с миром
         // this.#penguinBody.setVelocity(0, 80);
 
@@ -98,7 +98,9 @@ export class Penguin extends Unit {
         this.add(this.#gun);
 
         let penguinBounds = this.#penguinBody.getBounds();
-        this.setWidthHeight(penguinBounds.width, penguinBounds.height);
+        this.setSize(penguinBounds.width, penguinBounds.height);
+         /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setOffset(penguinBounds.width / 2, penguinBounds.height / 2);
+
         gameObjects.push(this);
         const force = 40;
         this.collisionSteering = new AvoidCollisionSteering(
