@@ -294,4 +294,15 @@ export class Penguin extends Unit {
         // this.setTarget(target);
         this.useGun();
     }
+
+    die() {
+        super.die();
+
+        try {
+            // @ts-ignore
+            const index = this.scene.penguins.indexOf(this);
+            // @ts-ignore
+            this.scene.penguins.splice(index, 1);
+        } catch (error) { /* empty */ }
+    }
 }

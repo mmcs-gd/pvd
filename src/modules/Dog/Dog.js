@@ -12,6 +12,7 @@ export class Dog extends Unit {
     /** @type {"forward" | "backward"} */ #orientation = 'forward';
     /** @type {Phaser.GameObjects.Image} */ #sprite;
     /** @type {number} */ #reward;
+    /** @type {number} */ #damage;
 
     /**
      * @param {Phaser.Scene} scene
@@ -19,13 +20,15 @@ export class Dog extends Unit {
      * @param {number} y
      * @param {Object} options
      * @param {number} options.health
+     * @param {number} options.damage
      * @param {number} options.reward
      * @param {string} options.assetKey
     */
-    constructor(scene, x, y, { health, reward, assetKey }) {
+    constructor(scene, x, y, { health, damage, reward, assetKey }) {
         super(scene, x, y, health);
 
         this.#reward = reward;
+        this.#damage = damage;
 
         this.#sprite = scene.physics.add.sprite(0, 0, assetKey);
         this.#sprite.setScale(0.75);
@@ -36,6 +39,7 @@ export class Dog extends Unit {
         const bounds = this.#sprite.getBounds();
         this.setSize(bounds.width, bounds.height);
          /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setSize(bounds.width, bounds.height);
+         /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setOffset(bounds.width / 2, bounds.height / 2);
 
         const force = 40;
         this.speed = 50.0;
@@ -114,6 +118,11 @@ export class Dog extends Unit {
             this.isForwardOrientation ? 1 : -1,
             1
         );
+    }
+
+    /** @param {Unit} target */
+    attack(target) {
+        target.takeDamage(this.#damage);
     }
 
     die() {

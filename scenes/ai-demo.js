@@ -111,15 +111,15 @@ export default class AIDemoScene extends Phaser.Scene {
 
     createDog() {
         // spawn not animated dog for debug collision
-        const dog = new Dog(this, 600, 300, { health: 100, reward: 1, assetKey: 'dog01' });
+        const dog = new Dog(this, 600, 300, { health: 100, damage: 50, reward: 1, assetKey: 'dog01' });
 
         // @ts-ignore
         if (!dog.dogStateTable.patrolState.steering instanceof PatrolSteering) throw new Error("unexpected steering!")
 
         // @ts-ignore
-        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(550, 50));
+        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(600, 100));
         // @ts-ignore
-        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(550, 400));
+        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(600, 400));
         this.gameObjects.push(dog);
         this.dogs.push(dog);
     }
