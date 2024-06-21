@@ -22,6 +22,7 @@ export default defineConfig({
                 },
             },
         },
+        outDir: "./dist/pvd/"
     },
 
     plugins: [tsconfigPaths()],
