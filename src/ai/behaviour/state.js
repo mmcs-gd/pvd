@@ -24,7 +24,6 @@ export class FiniteStateMachine {
     }
 
     update(time, delta) {
-        // console.log(time);
         this.currentState.update(time, delta);
         this.currentState = this.stateTable.getNextState(this.currentState);
     }

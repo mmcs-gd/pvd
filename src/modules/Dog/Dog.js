@@ -77,6 +77,8 @@ export class Dog extends Unit {
             );
         }
 
+        console.log("Dog update");
+        console.log(this.bodyPosition);
         this.stateMachine.update(time, delta);
     }
 

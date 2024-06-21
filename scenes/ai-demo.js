@@ -101,7 +101,7 @@ export default class AIDemoScene extends Phaser.Scene {
     createDog() {
         // spawn not animated dog for debug collision
         const dog = new Dog(this, 600, 300, { health: 1, reward: 1, assetKey: 'dog01' });
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 0));
+        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 100));
         dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(240, 400));
         this.gameObjects.push(dog);
         this.dogs.push(dog);

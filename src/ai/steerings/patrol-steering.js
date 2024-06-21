@@ -36,11 +36,10 @@ export class PatrolSteering extends Steering {
     calculateImpulse () {
         if (this.currentTarget == null) return new Phaser.Math.Vector2(0, 0);
 
-        const position = this.owner.bodyPosition;
-        if (this.currentTarget.distance(position) <= this.owner.speed + this.EPS) {
+        if (this.currentTarget.distance(this.owner.bodyPosition) <= this.owner.speed + this.EPS) {
             this.currentTargetIndex++;
         }
-        const directionToTarget = this.currentTarget.subtract(position).normalize();
+        const directionToTarget = this.currentTarget.subtract(this.owner.bodyPosition).normalize();
         const impulse =  directionToTarget.scale(this.owner.speed);
         return impulse
     }

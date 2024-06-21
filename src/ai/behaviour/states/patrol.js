@@ -25,7 +25,6 @@ export class PatrolState extends State {
         console.log("OnExit");
         this.steeringManager.removeLastSteering();
         this.steeringManager.removeMoveForce();
-        console.log([...this.steeringManager.steerings]);
     }
 
     update(time, delta) {
