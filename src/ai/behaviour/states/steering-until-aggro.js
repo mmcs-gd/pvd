@@ -3,28 +3,40 @@ import { PatrolSteering } from 'src/ai/steerings/patrol-steering.js';
 import SteeringManager from 'src/ai/steerings/steering-manager.js';
 import Unit from 'src/objects/Unit.js';
 import { State } from '../state.js';
+import { GoToTargetSteering } from 'src/ai/steerings/go-to-target-steering.js';
 
-export class PatrolState extends State {
+export class SteeringUntilAggroState extends State {
     /** @type {SteeringManager} */ steeringManager;
+    /** @type {PatrolSteering | GoToTargetSteering} */ steering;
 
-    constructor(owner, aggroDistance) {
+    /** @param {"patrol" | "go_to_target"} steeringName */
+    constructor(owner, aggroDistance, steeringName = "patrol") {
         super(owner);
         this.steeringManager = owner.steeringManager;
-        const force = 40;
         this.aggroDistance = aggroDistance;
+        this.steeringName = steeringName;
+    }
+
+    choseSteering = (steeringName) => {
+        switch (steeringName) {
+            case "patrol":
+                return new PatrolSteering(this.owner, [], 40);
+            case "go_to_target":
+                return new GoToTargetSteering(this.owner, [], 40);
+        }
     }
 
     onStateEnter = (context) => {
         console.log("Patrol enter!");
-        this.patrolSteering = new PatrolSteering(this.owner, [], 40);
-        this.steeringManager.addSteering(this.patrolSteering);
-        this.steeringManager.addMoveForce();
+        this.steering = this.choseSteering(this.steeringName);
+        this.steeringManager.addSteering(this.steering);
+        // this.steeringManager.addMoveForce();
     }
 
     onStateExit = (context) => {
         console.log("OnExit");
         this.steeringManager.removeLastSteering();
-        this.steeringManager.removeMoveForce();
+        // this.steeringManager.removeMoveForce();
     }
 
     update(time, delta) {

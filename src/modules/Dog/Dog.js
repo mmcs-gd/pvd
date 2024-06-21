@@ -27,7 +27,7 @@ export class Dog extends Unit {
 
         this.#reward = reward;
 
-        this.#sprite = scene.physics.add.image(0, 0, assetKey);
+        this.#sprite = scene.physics.add.sprite(0, 0, assetKey);
         this.add(this.#sprite);
 
         const bounds = this.#sprite.getBounds();
@@ -49,6 +49,12 @@ export class Dog extends Unit {
         this.stateMachine = new FiniteStateMachine(this.dogStateTable);
 
         scene.add.existing(this);
+    }
+
+    getPhysicBody() {
+        console.log("Physic body query");
+        console.log(this.#sprite);
+        return this.#sprite;
     }
 
     get context() {

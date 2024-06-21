@@ -9,6 +9,9 @@ import Unit from 'src/objects/Unit.js';
 import Steering from 'src/ai/steerings/steering.js';
 import CohesionSteering from 'src/ai/steerings/cohesion-steering.js';
 import SeparationSteering from 'src/ai/steerings/separation-steering.js';
+import { FiniteStateMachine } from 'src/ai/behaviour/state.js';
+import { PenguinStateTable } from 'src/ai/behaviour/penguin-fsm.js';
+import Vector2 from 'phaser/src/math/Vector2.js'
 
 /* Regarding to 0,0 */
 const PENGUIN_BELLY_BUTTON_POSITION = {
@@ -123,17 +126,40 @@ export class Penguin extends Unit {
         this.steeringManager = steeringManager;
         this.collisionSteering.steeringManager = this.steeringManager;
 
+        this.penguinStateTable = new PenguinStateTable(this, this.context);
+        this.penguinStateMachine = new FiniteStateMachine(this.penguinStateTable);
+        this.speed = 50;
 
         scene.add.existing(this);
     }
 
+    get context() {
+        return {
+            // @ts-ignore
+            enemies: this.scene.dogs ?? [],
+            // @ts-ignore
+            gameObjects: this.scene.gameObjects ?? []
+        };
+    }
     /**
    * @param {number} time
    * @param {number} delta
    */
     update = (time, delta) => {
         super.update(time, delta);
+        this.updateGunRotation()
+        this.#gunConfig.update(delta);
 
+        this.setOrientation(
+            !this.#target || this.#penguinBody.getBounds().centerX < this.#target.x
+                ? 'forward'
+                : 'backward'
+        );
+
+        this.penguinStateMachine.update(time, delta);
+    };
+
+    updateGunRotation() {
         const rotation = this.#target
             ? Phaser.Math.Angle.Between(
                 this.x,
@@ -144,16 +170,7 @@ export class Penguin extends Unit {
             : 0;
 
         this.#gun.rotation = rotation;
-        this.#gunConfig.update(delta);
-
-        this.setOrientation(
-            !this.#target || this.#penguinBody.getBounds().centerX < this.#target.x
-                ? 'forward'
-                : 'backward'
-        );
-
-        this.steeringManager.update();
-    };
+    }
 
     separate() {
         if (this.separationSteering.active) {
@@ -183,11 +200,18 @@ export class Penguin extends Unit {
         }
     }
 
+    /** @param {Vector2} destination  */
+    setDestination(destination) {
+        // @ts-ignore
+        this.penguinStateTable.goToTargetState.steering.targetPoint = destination;
+    }
+
     /**
    * @param {Target} target
    */
     setTarget = (target) => {
         this.#target = target;
+        this.updateGunRotation()
     };
 
     /**
@@ -255,13 +279,17 @@ export class Penguin extends Unit {
         this.#gunConfig.reload();
     };
 
+    targetAcquired(target) {
+        this.setTarget(target);
+    }
+    
     /** @param {Unit} target */
     attack(target) {
         const distance = this.distance(target);
 
         if (distance > this.#gunConfig.range) return;
 
-        this.setTarget(target);
+        // this.setTarget(target);
         this.useGun();
     }
 }

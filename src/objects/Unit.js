@@ -63,6 +63,9 @@ export default class Unit extends Phaser.GameObjects.Container {
         this.#steeringManager = newValue;
     }
 
+    getPhysicBody() {
+        return null;
+    }
 
     get bodyPosition() {
         return this.#physicBody.position.clone();
@@ -159,8 +162,11 @@ export default class Unit extends Phaser.GameObjects.Container {
         this.setVisible(false);
     }
 
-    /** @param {Unit} other */
-    attack(other) {
+    /** @param {Unit} target */
+    targetAcquired(target) {}
+
+    /** @param {Unit} target */
+    attack(target) {
         console.log("Attack!");
     }
 }

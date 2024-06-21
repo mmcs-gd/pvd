@@ -49,6 +49,8 @@ export default class Bullet {
 
         // set layers, which block with bullet
         blockedLayers.forEach(layer => {
+            console.log("Layer");
+            console.log(layer);
             scene.physics.add.collider(this.sprite, layer, this.onHit, null, scene);
         });
     }
@@ -79,6 +81,9 @@ export default class Bullet {
      * @param {	Phaser.Tilemaps.Tile | Phaser.Types.Physics.Arcade.GameObjectWithBody} other
      */
     onHit(self, other) {
+        console.log("On hit with:");
+        console.log(other);
+
         /** @type {Bullet}*/ (/** @type {unknown}*/ (self)).destroyed = true;
         self.destroy(); //
         ParticlesSystem.create('HitWall', 400, 400);

@@ -11,6 +11,7 @@ import { Dog } from 'src/modules/Dog/Dog.js';
 import Unit from 'src/objects/Unit.js';
 import Vector2 from 'phaser/src/math/Vector2.js';
 import { AvoidCollisionSteering } from 'src/ai/steerings/avoid-collision-steering.js';
+import { PatrolSteering } from 'src/ai/steerings/patrol-steering.js';
 
 // debug bullets params
 const bulletsDepth = 0; // set 11 - bullets will display above column
@@ -57,11 +58,15 @@ export default class AIDemoScene extends Phaser.Scene {
         this.physics.world.bounds.width = this.map.widthInPixels;
         this.physics.world.bounds.height = this.map.heightInPixels;
 
-        // add layers or array of game objects in second param, that mean blocking with bullets
-        BulletsManager.create([this.worldLayer, this.aboveLayer, this.aboveUpper, this.gameObjects], bulletsDepth);
-
         this.createDog();
         this.createPenguin();
+
+        // add layers or array of game objects in second param, that mean blocking with bullets
+        // BulletsManager.create([this.worldLayer, this.aboveLayer, this.aboveUpper, this.gameObjects], bulletsDepth);
+        const objectBodies = this.gameObjects.map(obj => obj.getPhysicBody());
+        console.log(objectBodies);
+        BulletsManager.create(this.gameObjects, bulletsDepth);
+
         this.lastTick = getTime();
 
         this.setupInputs();
@@ -101,8 +106,14 @@ export default class AIDemoScene extends Phaser.Scene {
     createDog() {
         // spawn not animated dog for debug collision
         const dog = new Dog(this, 600, 300, { health: 1, reward: 1, assetKey: 'dog01' });
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(600, 100));
-        dog.dogStateTable.patrolState.patrolSteering.addPatrolPoint(new Phaser.Math.Vector2(240, 400));
+
+        // @ts-ignore
+        if (!dog.dogStateTable.patrolState.steering instanceof PatrolSteering) throw new Error("unexpected steering!")
+
+        // @ts-ignore
+        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(550, 50));
+        // @ts-ignore
+        dog.dogStateTable.patrolState.steering.addPatrolPoint(new Phaser.Math.Vector2(550, 400));
         this.gameObjects.push(dog);
         this.dogs.push(dog);
     }
@@ -125,13 +136,16 @@ export default class AIDemoScene extends Phaser.Scene {
             }
         });
 
-        this.penguin = new Penguin(this, 200, 400, [], {
+        this.penguin = new Penguin(this, 100, 300, [], {
             bodyKey: '2c',
             gunConfig,
             stats: { health: 200 },
-            target: this.gameObjects[0],
+            target: null,
             faceToTarget: true,
         });
+
+        this.penguin.setDestination(new Vector2(550, 300));
+
         this.gameObjects.push(this.penguin);
         this.penguins.push(this.penguin);
     }
