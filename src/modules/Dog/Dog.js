@@ -28,10 +28,14 @@ export class Dog extends Unit {
         this.#reward = reward;
 
         this.#sprite = scene.physics.add.sprite(0, 0, assetKey);
+        this.#sprite.setScale(0.75);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setSize(180 * 1.25, 130 * 1.25);
+        /** @type {Phaser.Physics.Arcade.Body}*/ (this.#sprite.body).setOffset(50, 48);
         this.add(this.#sprite);
 
         const bounds = this.#sprite.getBounds();
-        this.setWidthHeight(bounds.width, bounds.height);
+        this.setSize(bounds.width, bounds.height);
+         /** @type {Phaser.Physics.Arcade.Body}*/ (this.body).setSize(bounds.width, bounds.height);
 
         const force = 40;
         this.speed = 50.0;

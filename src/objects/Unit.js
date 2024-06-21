@@ -147,6 +147,10 @@ export default class Unit extends Phaser.GameObjects.Container {
      * @param {number} damage
      */
     takeDamage(damage) {
+        console.log("Try take damage");
+        console.log(this.#health);
+        console.log(damage);
+
         if (this.#isDead) return;
 
         this.#health -= damage;
@@ -154,6 +158,9 @@ export default class Unit extends Phaser.GameObjects.Container {
             this.die();
             console.log('I died');
         }
+
+        console.log("HP left:");
+        console.log(this.#health);
     }
 
     die() {

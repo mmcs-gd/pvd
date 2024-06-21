@@ -24,7 +24,6 @@ export class PursuitAndAttackState extends State {
     }
 
     onStateEnter = (context) => {
-        console.log("Run to target state enter!");
         this.context = context;
         this.target = this.findClosestTarget();
         this.pursuitSteering = new Pursuit(this.owner, this.context.gameObjects, 40, this.attackRange);
@@ -32,11 +31,9 @@ export class PursuitAndAttackState extends State {
         this.owner.targetAcquired(this.target);
 
         this.steeringManager.addSteering(this.pursuitSteering);
-        console.log([...this.steeringManager.steerings]);
     }
 
     onStateExit = (context) => {
-        console.log("Run to target state exit!");
         this.steeringManager.removeLastSteering();
         // this.steeringManager.removeMoveForce();
         this.pursuitSteering = null;

@@ -27,14 +27,12 @@ export class SteeringUntilAggroState extends State {
     }
 
     onStateEnter = (context) => {
-        console.log("Patrol enter!");
         this.steering = this.choseSteering(this.steeringName);
         this.steeringManager.addSteering(this.steering);
         // this.steeringManager.addMoveForce();
     }
 
     onStateExit = (context) => {
-        console.log("OnExit");
         this.steeringManager.removeLastSteering();
         // this.steeringManager.removeMoveForce();
     }

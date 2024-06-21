@@ -53,8 +53,9 @@ export class BulletsManager {
      * @param {number} velocity 
      * @param {number} distance 
      * @param {number} fallingSpeed 
+     * @param {number} damage
      */
-    static spawnBullet(sprite = 'bullet1', location = [400, 300], scale = 1, rotation, velocity = 400, distance = 400, fallingSpeed = 1) {
-        this.bullets.push(new Bullet(this.scene, sprite, location, scale, rotation, velocity, distance, this.blockedLayers, fallingSpeed, this.depth));
+    static spawnBullet(sprite = 'bullet1', location = [400, 300], scale = 1, rotation, velocity = 400, distance = 400, fallingSpeed = 1, damage = 50) {
+        this.bullets.push(new Bullet(this.scene, sprite, location, scale, rotation, velocity, distance, this.blockedLayers, fallingSpeed, this.depth, damage));
     }
 }
