@@ -10,5 +10,20 @@ export default defineConfig({
         open: true,
     },
 
+    build: {
+        rollupOptions: {
+            output: {
+                // Public path for assets is prefixed with base
+                assetFileNames: ({ name }) => {
+                    if (name && name.startsWith('assets/')) {
+                        return name.replace(/^assets\//, 'pvd/assets/');
+                    }
+                    return name;
+                },
+            },
+        },
+        outDir: "./dist/pvd/"
+    },
+
     plugins: [tsconfigPaths()],
 });
