@@ -167,6 +167,12 @@ export default class Unit extends Phaser.GameObjects.Container {
         this.#isDead = true;
         this.setActive(false);
         this.setVisible(false);
+        try {
+            // @ts-ignore
+            const index = this.scene.gameObjects.indexOf(this);
+            // @ts-ignore
+            this.scene.gameObjects.splice(index, 1);
+        } catch (error) { /* empty */ }
     }
 
     /** @param {Unit} target */

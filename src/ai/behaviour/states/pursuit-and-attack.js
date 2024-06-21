@@ -5,9 +5,11 @@ import { State } from '../state.js';
 import { Pursuit } from 'src/ai/steerings/pursuit.js';
 
 function findMinBy(array, fn) {
-  return array.reduce((maxElem, currentElem) => {
-    return fn(currentElem) < fn(maxElem) ? currentElem : maxElem;
-  });
+    if (array.length === 0) return null;
+
+    return array.reduce((maxElem, currentElem) => {
+        return fn(currentElem) < fn(maxElem) ? currentElem : maxElem;
+    });
 }
 
 export class PursuitAndAttackState extends State {
@@ -41,11 +43,20 @@ export class PursuitAndAttackState extends State {
 
     update(time, delta) {
         const target = this.findClosestTarget();
+        if (target === null) {
+            this.target = null;
+            this.owner.targetAcquired(this.target);
+            console.log("Null target in pursuit state");
+            return;
+        }
+
         if (target !== this.target) {
             console.log("New target!");
             this.target = target;
+            this.owner.targetAcquired(this.target);
             this.pursuitSteering.target = target;
         }
+
         this.steeringManager.update();
         if (this.owner.bodyVelocity.length() < 10) {
             this.enqueAttack(time, delta)
@@ -67,6 +78,6 @@ export class PursuitAndAttackState extends State {
     }
 
     shouldLoseTarget = (context) => {
-        return this.owner.distance(this.target) > this.loseTargetRange;
+        return this.target === null || this.owner.distance(this.target) > this.loseTargetRange;
     }
 }

@@ -115,4 +115,15 @@ export class Dog extends Unit {
             1
         );
     }
+
+    die() {
+        super.die();
+
+        try {
+            // @ts-ignore
+            const index = this.scene.dogs.indexOf(this);
+            // @ts-ignore
+            this.scene.dogs.splice(index, 1);
+        } catch (error) { /* empty */ }
+    }
 }

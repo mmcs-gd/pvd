@@ -15,24 +15,41 @@ export class SteeringUntilAggroState extends State {
         this.steeringManager = owner.steeringManager;
         this.aggroDistance = aggroDistance;
         this.steeringName = steeringName;
+        this.steering = null;
     }
 
     choseSteering = (steeringName) => {
         switch (steeringName) {
-            case "patrol":
-                return new PatrolSteering(this.owner, [], 40);
-            case "go_to_target":
-                return new GoToTargetSteering(this.owner, [], 40);
+            case "patrol":{
+                if (this.steering === null) {
+                    this.steering = new PatrolSteering(this.owner, [], 40);
+                }
+                return this.steering;
+            }
+            case "go_to_target": {
+                if (this.steering === null) {
+                    this.steering = new GoToTargetSteering(this.owner, [], 40);
+                }
+
+                return this.steering;
+            }
         }
     }
 
     onStateEnter = (context) => {
+        console.log("Enter steering until aggro");
         this.steering = this.choseSteering(this.steeringName);
         this.steeringManager.addSteering(this.steering);
         // this.steeringManager.addMoveForce();
+        if (this.steeringName == "go_to_target") {
+            // @ts-ignore
+            console.log(this.steering.targetPoint);
+            console.log(this.owner.bodyPosition);
+        }
     }
 
     onStateExit = (context) => {
+        console.log("Enter steering until aggro");
         this.steeringManager.removeLastSteering();
         // this.steeringManager.removeMoveForce();
     }

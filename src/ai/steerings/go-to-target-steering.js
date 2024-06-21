@@ -28,12 +28,12 @@ export class GoToTargetSteering extends Steering {
     calculateImpulse () {
         if (this.targetPoint == null) return new Phaser.Math.Vector2(0, 0);
 
-        if (this.targetPoint.distance(this.owner.bodyPosition) <= this.owner.speed + this.EPS) {
+        if (this.targetPoint.distance(this.owner.bodyPosition) <= this.owner.mySpeed + this.EPS) {
             return new Phaser.Math.Vector2(0, 0); // reached the target
         }
 
         const directionToTarget = this.targetPoint.subtract(this.owner.bodyPosition).normalize();
-        const impulse =  directionToTarget.scale(this.owner.speed);
+        const impulse =  directionToTarget.scale(this.owner.mySpeed);
         return impulse
     }
 }
